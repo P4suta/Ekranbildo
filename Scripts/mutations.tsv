@@ -1,0 +1,387 @@
+# Mutations that the test suite must catch.
+#
+# These are written by hand, and they are the half a generator cannot produce.
+# swift-mutants reads this package and makes 2256 of its own - comparison flips,
+# boolean literals, arithmetic, connective operands - and measuring both against
+# each other showed that only 20 of the 290 here are among them. The rest ask a
+# different kind of question.
+#
+# A generated mutant asks whether an operator is correct. These ask whether a
+# piece of code is load-bearing: drop the tie-break from a sort, remove a guard
+# clause, use the wrong named constant, take an argument out of a call, collapse
+# a ternary, return the value instead of the value passed through a function.
+# Every hole worth having found in this project came from a question of the
+# second kind, and none of them is an operator flip.
+#
+# They also cover the one place swift-mutants currently cannot reach. Its guard
+# is injected as a private function, which an @inlinable function may not call,
+# so every mutant inside one is refused - and this package marks its innermost
+# geometry @inlinable. Geo.swift and Direction16.swift hold the predicates the
+# whole solver rests on, and the eight rows here that name them are, for now,
+# the only mutation coverage they have.
+#
+# A column may not be empty and may not contain a newline. Reading the file
+# splits on tabs, and consecutive tabs collapse into one - so an empty column
+# silently shifts every column after it, and the mutation then replaces the
+# anchor with its own description. That does not compile, a mutant that does not
+# compile counts as killed, and the row passes for a reason nobody intended.
+# To delete a line, replace it with something inert rather than with nothing.
+#
+# Columns are tab-separated: file, exact search text (must appear exactly once),
+# replacement, description.
+#
+# Only list mutations that genuinely change behaviour. An "equivalent mutant"
+# produces identical output for every input and will always survive; listing one
+# just pressures you into contorting the tests. Four have been tried and removed
+# after being shown equivalent:
+#   - relaxing the well-formed guard before building the saliency layer: the
+#     map's own subscript already answers zero for a malformed map, so every
+#     cell added weighs nothing.
+#   - falling back to an empty buffer when a picture is missing: converting an
+#     empty buffer fails, so the same warning is reported either way.
+#   - relaxing `guard scale != 1` in the coordinate conversion: dividing by one
+#     is what the guard was skipping.
+#   - relaxing `guard width > 0` in overlapArea: a zero width multiplies out to zero.
+#   - relaxing the clipped-interval guard in segmentIntersectsInterior: the strict
+#     midpoint containment check already rejects those cases.
+#   - `b.minX > a.maxX` to `>=` in gapSquared: when the rectangles touch, both
+#     branches yield a delta of exactly zero.
+#   - turning either early exit in the Liang-Barsky clipper into a continue: those
+#     branches only fire when the slab intersection is already empty, and the
+#     midpoint check cannot then report a false positive. A search over two million
+#     random segments plus a dense grid found no distinguishing input for either
+#     branch, matching the proof written up above segmentIntersectsInterior.
+#
+# file	search	replace	description
+Sources/EkranbildoGeometry/Geo.swift	if turn > tolerance { return 1 }	if turn > tolerance { return -1 }	orientation: flip the counter-clockwise sign
+Sources/EkranbildoGeometry/Geo.swift	return o1 != o2 && o3 != o4 && o1 != 0 && o2 != 0 && o3 != 0 && o4 != 0	return o1 != o2 && o3 != o4	properIntersect: stop excluding endpoint contact
+Sources/EkranbildoGeometry/Geo.swift	return midpoint.x > rect.minX + tolerance && midpoint.x < rect.maxX - tolerance	return midpoint.x >= rect.minX - tolerance && midpoint.x <= rect.maxX + tolerance	interior: relax the strict X containment of the midpoint
+Sources/EkranbildoGeometry/Geo.swift	let width = min(a.maxX, b.maxX) - max(a.minX, b.minX)	let width = max(a.maxX, b.maxX) - min(a.minX, b.minX)	overlapArea: take the union span instead of the intersection span
+Sources/EkranbildoGeometry/Direction16.swift	        let turn = Int(Self.count) + Int(Self.halfTurn) - Int(rawValue)	        let turn = Int(Self.count) - Int(rawValue)	Direction16: swap the horizontal mirror for the vertical one
+Sources/EkranbildoGeometry/Direction16.swift	Self(rawValue: (rawValue + Self.halfTurn) % Self.count)!	Self(rawValue: (rawValue + Self.halfTurn / 2) % Self.count)!	Direction16: opposite rotates by a quarter turn
+Sources/EkranbildoGeometry/Direction16.swift	return min(raw, Int(Self.count) - raw)	return raw	stepDistance: forget the circular wrap
+Sources/EkranbildoGeometry/Determinism.swift	static let increment: UInt64 = 0x9E37_79B9_7F4A_7C15	static let increment: UInt64 = 0x9E37_79B9_7F4A_7C16	SplitMix64: perturb the golden-ratio increment
+Sources/EkranbildoGeometry/Determinism.swift	folded.append(buffer[index] + buffer[index + 1])	folded.append(buffer[index])	DeterministicSum: drop half of every fold
+Sources/EkranbildoObservability/TraceValue.swift	lhs.key == rhs.key ? lhs.offset < rhs.offset : lhs.key < rhs.key	lhs.key == rhs.key ? lhs.offset < rhs.offset : lhs.key > rhs.key	TraceAttributes: sort keys descending
+Sources/EkranbildoObservability/TraceValue.swift	deduplicated[deduplicated.count - 1] = Entry(key: item.key, value: item.value)	break	TraceAttributes: let the first duplicate win instead of the last
+Sources/EkranbildoObservability/CanonicalText.swift	if value == 0 { return "0.0" }	if value == 0 { return String(value) }	CanonicalText: stop normalising negative zero
+Sources/EkranbildoObservability/Ticks.swift	TickInterval(nanoseconds: nanoseconds - earlier.nanoseconds)	TickInterval(nanoseconds: earlier.nanoseconds - nanoseconds)	Ticks: reverse the direction of an interval
+Sources/EkranbildoObservability/Diagnostics.swift	private static let minimumDigits = 4	private static let minimumDigits = 3	DiagnosticCode: pad to three digits instead of four
+Sources/EkranbildoObservability/TraceLog.swift	openSpans.append(	openSpans.insert(	TraceLog: treat the span stack as a queue
+Sources/EkranbildoContracts/CoordinateSpaces.swift	x: (point.x - bounds.minX) * backingScale	x: (point.x - bounds.minX) / backingScale	DisplayGeometry: divide by the backing scale instead of multiplying
+Sources/EkranbildoContracts/CoordinateSpaces.swift	ImagePixel(x: point.x * backingScale, y: point.y * backingScale)	ImagePixel(x: point.x, y: point.y)	CaptureGeometry: ignore the backing scale when producing image pixels
+Sources/EkranbildoContracts/CoordinateSpaces.swift	ScenePoint(x: point.x - regionInScreen.minX, y: point.y - regionInScreen.minY)	ScenePoint(x: point.x, y: point.y)	CaptureGeometry: forget to offset by the captured region
+Sources/EkranbildoContracts/CoordinateSpaces.swift	ScreenPoint(x: point.x, y: primaryDisplayHeight - point.y)	ScreenPoint(x: point.x, y: point.y)	AppKitCoordinates: skip the vertical flip entirely
+Sources/EkranbildoContracts/DrawList.swift	return SpaceRect(pathBounds.raw.inset(by: -stroke.width / 2))	return SpaceRect(pathBounds.raw)	DrawCommand: forget that a stroke spills outside its path
+Sources/EkranbildoContracts/DrawPath.swift	let radius = max(0, min(cornerRadius, limit))	let radius = max(0, cornerRadius)	Path: stop clamping the corner radius
+Sources/EkranbildoContracts/Paint.swift	y: baselineOrigin.y - metrics.ascent,	y: baselineOrigin.y + metrics.ascent,	TextRun: measure the box downward from the baseline
+Sources/EkranbildoContracts/Paint.swift	static let places = 3	static let places = 6	DrawListFormat: change the golden number precision
+Sources/EkranbildoContracts/Paint.swift	return "#\(channel(red))\(channel(green))\(channel(blue))\(channel(alpha))"	return "#\(channel(blue))\(channel(green))\(channel(red))\(channel(alpha))"	Color: swap the red and blue channels
+Sources/EkranbildoContracts/DrawList.swift	let minX = min(current.minX, commandBounds.minX)	let minX = max(current.minX, commandBounds.minX)	DrawList: intersect command bounds instead of uniting them
+Sources/EkranbildoObservability/CanonicalText.swift	let scaled = (value * scale).rounded()	let scaled = (value * scale)	CanonicalText: truncate instead of rounding
+Sources/EkranbildoContracts/CoordinateSpaces.swift	"\(Space.name)\(DrawListFormat.point(self))"	"\(DrawListFormat.point(self))"	SpacePoint: drop the space name from trace output
+Sources/EkranbildoFixtures/FakeCapabilities.swift	return Self.isWide(character) ? wideAdvanceRatio : defaultAdvanceRatio	return defaultAdvanceRatio	TabulatedTextMeasurer: measure wide characters as narrow
+Sources/EkranbildoFixtures/FakeCapabilities.swift	total.add(ratio(for: character) * font.size)	total.add(ratio(for: character))	TabulatedTextMeasurer: ignore the font size
+Sources/EkranbildoFixtures/FakeCapabilities.swift	let insertion = storedNames.firstIndex { $0 > name } ?? storedNames.count	let insertion = storedNames.count	InMemoryFileStore: append instead of inserting in sorted order
+Sources/EkranbildoCore/Scene.swift	let center = P2(x: tail.x + outward.x * toEdge, y: tail.y + outward.y * toEdge)	let center = P2(x: tail.x - outward.x * toEdge, y: tail.y - outward.y * toEdge)	ResolvedPlacement: put the label on the target's side of the tail
+Sources/EkranbildoCore/Scene.swift	width: textSize.width + 2 * style.labelPaddingHorizontal,	width: textSize.width,	ResolvedPlacement: drop the horizontal label padding
+Sources/EkranbildoRender/DrawListBuilder.swift	x: apex.x + outward.x * style.arrowheadLength,	x: apex.x - outward.x * style.arrowheadLength,	DrawListBuilder: point the arrowhead backwards
+Sources/EkranbildoCore/Scene.swift	) + style.tipGap	) - style.tipGap	ResolvedPlacement: put the tip inside the target instead of clear of it
+Sources/EkranbildoCore/Scene.swift	let toBorder = min(horizontal, vertical)	let toBorder = max(horizontal, vertical)	BoxGeometry: leave the box through the wrong edge
+Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift	context.scaleBy(x: CGFloat(scale), y: CGFloat(-scale))	context.scaleBy(x: CGFloat(scale), y: CGFloat(scale))	CoreGraphicsRenderer: stop flipping the Y axis
+Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift	            substituted: true	            substituted: false	CoreGraphicsRenderer: never report a font substitution
+Sources/EkranbildoCLI/RenderCommand.swift	guard let parsedScale = Double(text), parsedScale > 0, parsedScale.isFinite else {	guard let parsedScale = Double(text) else {	RenderOptions: accept a non-positive scale
+Sources/EkranbildoCore/Scene.swift	style = try container.decodeIfPresent(StyleTokens.self, forKey: .style) ?? .standard	style = .standard	Scene: ignore an explicitly given style
+Sources/EkranbildoField/OccupancyField.swift	- table[minRow * stride + maxColumn + 1]	+ table[minRow * stride + maxColumn + 1]	OccupancyField: flip a sign in the summed-area query
+Sources/EkranbildoField/OccupancyField.swift	planes[plane][index] = min(1, added)	planes[plane][index] = added	OccupancyFieldBuilder: let stacked weights exceed one
+Sources/EkranbildoField/OccupancyField.swift	guard let inside, insideArea > 0 else { return Self.outOfBoundsCost }	guard let inside, insideArea > 0 else { return 0 }	OccupancyField: treat off-canvas regions as free
+Sources/EkranbildoField/OccupancyField.swift	let stepCentre = 0.5	let stepCentre = 0.0	OccupancyField: sample corridors at segment starts instead of cell centres
+Sources/EkranbildoField/OccupancyField.swift	weight * (covered / cellArea)	weight	OccupancyFieldBuilder: ignore fractional cell coverage
+Sources/EkranbildoLayout/HardConstraints.swift	problem.canvas.raw.inset(by: margin).contains(candidate.labelRect.raw)	problem.canvas.raw.contains(candidate.labelRect.raw)	LabelInsideCanvas: drop the safety margin
+Sources/EkranbildoLayout/HardConstraints.swift	for target in problem.targets where Geo.overlaps(candidate.labelRect.raw, target.raw) {	for target in problem.targets where false && Geo.overlaps(candidate.labelRect.raw, target.raw) {	LabelClearOfTargets: never find an overlap
+Sources/EkranbildoLayout/HardConstraints.swift	if Geo.overlaps(first.labelRect.raw, second.labelRect.raw) { return false }	if false { return false }	LabelsAreSeparated: stop rejecting overlapping labels
+Sources/EkranbildoLayout/HardConstraints.swift	!Geo.polylinesConflict(first.leader, second.leader)	true	LeadersDoNotCross: allow every collision
+Sources/EkranbildoLayout/CandidateGeneration.swift	static let identifierStride: UInt32 = 10_000	static let identifierStride: UInt32 = 0	GridCandidateGenerator: collide identifiers between annotations
+Sources/EkranbildoLayout/Scoring.swift	        return (score / tolerance).rounded(.down)	        return score	LexicographicComparator: ignore the group tolerances
+Sources/EkranbildoLayout/Scoring.swift	result: difference < 0 ? .orderedAscending : .orderedDescending	result: difference < 0 ? .orderedDescending : .orderedAscending	LexicographicComparator: treat a higher badness as better
+Sources/EkranbildoLayout/Scoring.swift	result = tieBreak.0 < tieBreak.1 ? .orderedAscending : .orderedDescending	result = .orderedSame	LexicographicComparator: leave complete ties unordered
+Sources/EkranbildoLayout/Scoring.swift	if value.isNaN {	if false {	Normalized: let a broken measurement score as perfect
+Sources/EkranbildoLayout/Scoring.swift	if raw <= first.raw { return Normalized(first.badness) }	if raw <= first.raw { return Normalized(last.badness) }	Calibration: clamp to the wrong end
+Sources/EkranbildoLayout/BranchAndBound.swift	guard comparator.compare(bound, incumbent, tieBreak: neutralTieBreak) == .orderedDescending	guard comparator.compare(bound, incumbent, tieBreak: neutralTieBreak) == .orderedAscending	BranchAndBound: prune the promising branches instead of the hopeless ones
+Sources/EkranbildoLayout/ExactSolver.swift	return relaxable > rung	return relaxable >= rung	ExactSolver: relax constraints one rung too early
+Sources/EkranbildoLayout/ScoreTerms.swift	candidate.placement.direction.isAxisAligned ? Self.penalty : .best	Self.penalty	AxisAlignment: penalise every direction equally
+Sources/EkranbildoLayout/ScoreTerms.swift	Self.calibration.normalize((own / nearestOther).squareRoot())	Self.calibration.normalize((nearestOther / own).squareRoot())	TargetAmbiguity: invert the distance ratio
+Sources/EkranbildoLayout/ExactSolver.swift	if let winnerRank, !recordedRanks.contains(winnerRank) {	if let winnerRank, false, !recordedRanks.contains(winnerRank) {	ExactSolver: leave the winner out of the trace when it ranked low
+Sources/EkranbildoLayout/ExactSolver.swift	let alternative = options.first { $0.candidate.id != winner?.candidate.id }	let alternative = options.first	ExactSolver: explain the winner against itself
+Sources/EkranbildoInspector/QualityMetrics.swift	where Geo.overlaps(placements[outer].labelRect.raw, placements[inner].labelRect.raw) {	where false {	QualityMetrics: never notice overlapping labels
+Sources/EkranbildoInspector/CorpusRunner.swift	$0.concern == $1.concern ? $0.name < $1.name : $0.concern > $1.concern	$0.name < $1.name	CorpusRunner: sort alphabetically instead of by concern
+Sources/EkranbildoInspector/CorpusRunner.swift	        static let defect: Double = 1_000	        static let defect: Double = 1	CorpusRunner: let small concerns outweigh a real defect
+Sources/EkranbildoInspector/CorpusRunner.swift	concern: .infinity,	concern: 0,	CorpusRunner: sort failures to the bottom
+Sources/EkranbildoGeometry/Geo.swift	return high - low > tolerance	return false	Geo: stop detecting collinear overlap
+Sources/EkranbildoSemantics/EdgeMap.swift	let strength = min(1, magnitude / Sobel.fullContrastEdge)	let strength = min(1, magnitude)	EdgeMap: stop normalising the gradient magnitude
+Sources/EkranbildoSemantics/EdgeMap.swift	result[row * width + column] = strength < Defaults.noiseFloor ? 0 : strength	result[row * width + column] = strength	EdgeMap: let floating-point residue through as edge strength
+Sources/EkranbildoSemantics/RegionDetector.swift	Self.isSimilar(candidate, seed, tolerance: globalTolerance)	true	RegionDetector: drop the drift-from-seed check
+Sources/EkranbildoSemantics/RegionDetector.swift	guard Self.isSimilar(candidate, here, tolerance: localTolerance),	guard true,	RegionDetector: drop the neighbour-similarity check
+Sources/EkranbildoSemantics/RegionDetector.swift	private static let neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1)]	private static let neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]	RegionDetector: go eight-connected and leak through corners
+Sources/EkranbildoSemantics/ElementDetector.swift	guard min(region.rect.raw.width, region.rect.raw.height) >= minimumSide	guard true	ElementDetector: keep every speck as an element
+Sources/EkranbildoSemantics/ElementDetector.swift	guard min(region.rect.raw.width, region.rect.raw.height) >= minimumSide	guard region.rect.raw.area >= minimumSide	ElementDetector: measure the size floor by area again
+Sources/EkranbildoSemantics/ElementDetector.swift	: $0.rect.raw.area > $1.rect.raw.area	: $0.rect.raw.area < $1.rect.raw.area	ElementDetector: return smallest-area first
+Sources/EkranbildoLayout/LayoutProblem.swift	weight: element.confidence * Weights.forCovering(element.kind),	weight: 0,	LayoutProblem: let detected elements contribute nothing
+Sources/EkranbildoSemantics/TargetSnapper.swift	guard rect.raw.area >= previous.raw.area * Defaults.minimumWidening,	guard true,	TargetSnapper: offer rungs that are the same size as the one below
+Sources/EkranbildoSemantics/TargetSnapper.swift	rect.raw.contains(previous.raw)	true	TargetSnapper: let a rung sit beside the one below instead of around it
+Sources/EkranbildoSemantics/TargetSnapper.swift	.filter { $0.raw.contains(point.raw) }	.filter { _ in true }	TargetSnapper: offer readings that do not contain the click
+Sources/EkranbildoSemantics/TargetSnapper.swift	return ladder[((index % count) + count) % count]	return ladder[index % count]	TargetSnapper: trap instead of cycling backwards
+Sources/EkranbildoInspector/HTMLText.swift	case "<": result += "&lt;"	case "<": result.append("<")	HTMLText: stop escaping angle brackets
+Sources/EkranbildoCLI/FlagScanner.swift	flags.last { $0.name == name }?.value	flags.first { $0.name == name }?.value	FlagScanner: let the first use of a flag win over the last
+Sources/EkranbildoCLI/FlagScanner.swift	guard index + 1 < arguments.count else {	guard true else {	FlagScanner: accept a flag with no value
+Sources/EkranbildoContracts/ScreenElementListing.swift	.joined(separator: " ")	.joined(separator: "")	ScreenElement: run the listing fields together
+Sources/EkranbildoContracts/SceneSemantics.swift	y: (1 - (y + height)) * size.height,	y: y * size.height,	NormalizedBox: read recogniser boxes upside down
+Sources/EkranbildoContracts/SceneSemantics.swift	let column = min(columns - 1, Int(acrossCanvas * Double(columns)))	let column = Int(acrossCanvas * Double(columns))	SaliencyMap: let the far edge fall past the last cell
+Sources/EkranbildoContracts/SceneSemantics.swift	public var isWellFormed: Bool { !isEmpty && values.count == columns * rows }	public var isWellFormed: Bool { !isEmpty }	SaliencyMap: trust a map that does not match its own shape
+Sources/EkranbildoSemantics/RecordedSemanticProvider.swift	guard asked == snapshot.canvas else {	guard true else {	RecordedSemanticProvider: replay an answer recorded for another picture
+Sources/EkranbildoLayout/LayoutProblem.swift	weight: saliency[column: column, row: row] * Weights.saliency,	weight: 0,	LayoutProblem: let saliency contribute nothing
+Sources/EkranbildoSemantics/CombinedSemanticProvider.swift	if saliency.isEmpty, !answer.saliency.isEmpty {	if !answer.saliency.isEmpty {	CombinedSemanticProvider: let a later detector overwrite saliency
+Sources/EkranbildoSemantics/CombinedSemanticProvider.swift	providers.map(\.version).joined(separator: "+")	providers.first?.version ?? ""	CombinedSemanticProvider: name only the first detector in the version
+Sources/EkranbildoImaging/ImageCodec.swift	space: CoreGraphicsColorSpace.resolve(destination),	space: CoreGraphicsColorSpace.resolve(.sRGB),	ImageCodec: decode into one space and label it another
+Sources/EkranbildoImaging/ImageCodec.swift	            colorSpace: image.colorSpace,	            colorSpace: .sRGB,	ImageCodec: write every picture out labelled sRGB
+Sources/EkranbildoContracts/TransferFunction.swift	guard value > Curve.knee else { return value / Curve.slope }	guard false else { return value / Curve.slope }	TransferFunction: treat the curve as a plain power law
+Sources/EkranbildoContracts/TransferFunction.swift	return (1 + Curve.offset) * pow(value, 1 / Curve.exponent) - Curve.offset	return (1 + Curve.offset) * pow(value, Curve.exponent) - Curve.offset	TransferFunction: invert the curve with the wrong exponent
+Sources/EkranbildoSemantics/CombinedSemanticProvider.swift	return !lines.contains { $0.rect.raw.contains(element.rect.raw) }	return !lines.contains { Geo.overlaps($0.rect.raw, element.rect.raw) }	CombinedSemanticProvider: drop anything that merely crosses a line of text
+Sources/EkranbildoSemantics/CombinedSemanticProvider.swift	guard element.kind != .text else { return true }	guard true else { return true }	CombinedSemanticProvider: let text be dropped for sitting inside text
+Sources/EkranbildoContracts/Window.swift	guard window.isOnScreen, window.frame.raw.contains(point.raw) else { continue }	guard window.frame.raw.contains(point.raw) else { continue }	WindowStack: point at windows nobody can see
+Sources/EkranbildoContracts/Window.swift	if window.layer > current.window.layer {	if window.layer >= current.window.layer {	WindowStack: let the window behind win on an equal layer
+Sources/EkranbildoContracts/Window.swift	guard gap <= bestDistance else { continue }	guard true else { continue }	WindowStack: snap to edges however far away they are
+Sources/EkranbildoContracts/Window.swift	for window in onScreen {	for window in windows {	WindowStack: snap to the edges of windows nobody can see
+Sources/EkranbildoContracts/Window.swift	if let title, !title.isEmpty { return title }	if let title { return title }	WindowDescriptor: describe an untitled window as nothing at all
+Sources/EkranbildoCapture/ScreenCaptureKitCapturer.swift	return Double(pixels) / Double(points)	return Double(points) / Double(pixels)	ScreenCaptureKitCapturer: invert the backing scale
+Sources/EkranbildoContracts/AssetStore.swift	        [image.width, image.height]	        [image.width * image.height]	ContentHash: give a picture and its transpose the same name
+Sources/EkranbildoContracts/AssetStore.swift	            hash &*= Constants.prime	            hash &*= 1	ContentHash: stop mixing, so every picture hashes the same
+Sources/EkranbildoRenderCoreGraphics/DrawingPictures.swift	        context.scaleBy(x: 1, y: -1)	        context.scaleBy(x: 1, y: 1)	CoreGraphicsRenderer: draw stored pictures upside down
+Sources/EkranbildoLayout/LayoutProblem.swift	            case .text: text	            case .text: detectedElement	LayoutProblem: charge the same for covering words as for a surface
+Sources/EkranbildoCLI/AnnotateCommand.swift	                snapper.targets(among: elements, at: mark.point).first	                snapper.targets(among: elements, at: mark.point).last	AnnotateCommand: snap a click to the whole screen rather than the control
+Sources/EkranbildoCLI/FlagScanner.swift	        flags.filter { $0.name == name }.map(\.value)	        flags.filter { $0.name == name }.map(\.value).reversed()	FlagScanner: hand back repeated values in reverse
+Sources/EkranbildoStitch/Stitcher.swift	guard matched.rows >= minimumOverlap else { continue }	guard true else { continue }	Stitcher: match on an overlap too small to mean anything
+Sources/EkranbildoStitch/Stitcher.swift	for candidate in -(height - minimumOverlap)...(height - minimumOverlap) {	for candidate in 0...(height - minimumOverlap) {	Stitcher: refuse to notice a scroll backwards
+Sources/EkranbildoStitch/Stitcher.swift	guard let best, best.confidence >= acceptableCorrelation else { return nil }	guard let best else { return nil }	Stitcher: accept any match, however poor
+Sources/EkranbildoStitch/Stitcher.swift	!ignoring.contains(firstStart + index) && !ignoring.contains(secondStart + index)	!ignoring.contains(firstStart + index)	Stitcher: exclude the pinned band from one frame only
+Sources/EkranbildoStitch/Stitcher.swift	return (max(0, min(1, covariance.value() / spread)), used)	return (max(0, min(1, covariance.value())), used)	Stitcher: compare brightness instead of shape
+Sources/EkranbildoStitch/Joining.swift	guard top < first.height else { return (0, 0) }	guard true else { return (0, 0) }	Stitcher: call a page that never moved one big pinned header
+Sources/EkranbildoStitch/Joining.swift	while top < first.height, Self.rowIsUnchanged(top, in: frames) {	while top < first.height, top < 1 {	Stitcher: never find a pinned header
+Sources/EkranbildoStitch/Joining.swift	for (frame, position) in zip(frames, positions) {	for (frame, position) in zip(frames, positions).reversed() {	Stitcher: let the earliest view of a row win over the latest
+Sources/EkranbildoStitch/Joining.swift	                uncertain.append(	                _ = Array<UncertainJoin>(arrayLiteral: 	Stitcher: join a fast scroll silently
+Sources/EkranbildoFixtures/ScrollSimulator.swift	            let shift = Int(generator.next() % UInt64(span)) - noise	            let shift = 0	ScrollSimulator: stop adding noise, so every frame is exact
+Sources/EkranbildoRecord/Recorder.swift	            if latest.last?.presentedAt == frame.presentedAt {	            if false {	Recorder: keep two frames claiming the same moment
+Sources/EkranbildoRecord/Recorder.swift	for frame in frames.sorted(by: { ($0.presentedAt, $0.sequence) < ($1.presentedAt, $1.sequence) }) {	for frame in frames {	Recorder: keep frames in the order they arrived rather than were shown
+Sources/EkranbildoRecord/Recorder.swift	        guard time.nanoseconds >= 0 else {	        guard true else {	Recorder: accept a frame from before the recording started
+Sources/EkranbildoRecord/StreamRecorder.swift	            try? recorder.append(image, at: time)	            try! recorder.append(image, at: time)	SourceRecorder: lose a whole recording to a frame after the cut
+Sources/EkranbildoContracts/Recording.swift	        return Timestamp(nanoseconds: last.nanoseconds - first.nanoseconds)	        return last	Recording: report the last timestamp as the duration
+Sources/EkranbildoCLI/RecordCommand.swift	            repeating: "0", count: max(0, Naming.digits - digits.count))	            repeating: "0", count: 0)	RecordCommand: name frames so a directory sorts them 1, 10, 100
+Sources/EkranbildoEditor/HitTester.swift	        return handleHit(at: point)	        return labelHit(at: point) ?? handleHit(at: point)	HitTester: let a label swallow the handle on its own edge
+Sources/EkranbildoEditor/EditorInteractor.swift	public static let dragThreshold: Double = 3	public static let dragThreshold: Double = 0	EditorInteractor: treat every click as a drag
+Sources/EkranbildoEditor/EditorInteractor.swift	            if let existing = next.selection.firstIndex(of: id) {	            if false {	EditorInteractor: never take something out of a selection
+Sources/EkranbildoEditor/EditorInteractor.swift	        } else if !state.selection.contains(id) {	        } else if true {	EditorInteractor: collapse a multiple selection on every press
+Sources/EkranbildoEditor/EditorInteractor.swift	            width: abs(to.x - from.x),	            width: to.x - from.x,	EditorInteractor: sweep backwards into a rectangle of negative size
+Sources/EkranbildoEditor/Document.swift	        AnnotationID((scene.annotations.map(\.id.raw).max() ?? 0) + 1)	        AnnotationID(UInt32(scene.annotations.count) + 1)	Document: hand out a number already in use after a deletion
+Sources/EkranbildoEditor/Document.swift	        future.removeAll()	        	Document: let redo reinstate a change onto a scene it was never made to
+Sources/EkranbildoEditor/Document.swift	        if past.count > historyLimit {	        if false {	Document: keep an undo history without limit
+Sources/EkranbildoEditor/Document.swift	        let unplaced = scene.annotations.filter { $0.placement == nil }	        let unplaced = scene.annotations	Document: overrule a placement somebody made by hand
+Sources/EkranbildoCapture/StreamFrameSource.swift	        return status == .complete	        return true	StreamFrameSource: record the system's idle frames as new ones
+Sources/EkranbildoCapture/StreamFrameSource.swift	        guard let status else { return true }	        guard let status else { return false }	StreamFrameSource: throw away a frame the system said nothing about
+Sources/EkranbildoCLI/AnnotateCommand.swift	                x: element.rect.minX / scale,	                x: element.rect.minX * scale,	AnnotateCommand: scale retina findings the wrong way
+Sources/EkranbildoContracts/DrawPath.swift	        let corner = min(max(0, radius), limit)	        let corner = max(0, radius)	Path: let a corner radius turn the rectangle inside out
+Sources/EkranbildoContracts/DrawList.swift	            let spread = pathBounds.raw.inset(by: -shadow.blur)	            let spread = pathBounds.raw	DrawCommand: leave a shadow out of the area it dirties
+Sources/EkranbildoRender/Beautify.swift	        if amount >= 1 { return to }	        if amount >= 2 { return to }	Beautifier: end a gradient a fraction short of the colour asked for
+Sources/EkranbildoRender/Beautify.swift	            return TransferFunction.encodedFromLinear(light)	            return light	Beautifier: blend in encoded values, so gradients band
+Sources/EkranbildoRender/Beautify.swift	        self.padding = max(0, padding)	        self.padding = padding	BeautifyStyle: crop the screenshot to make room for a decoration
+Sources/EkranbildoRender/Beautify.swift	            offset: P2(x: 0, y: room * Proportion.shadowDrop),	            offset: P2(x: 0, y: -room * Proportion.shadowDrop),	Beautifier: light the picture from the floor
+Sources/EkranbildoRender/Beautify.swift	        static let shadowBlur: Double = 0.5	        static let shadowBlur: Double = 1.5	Beautifier: spill the shadow off the edge of the picture
+Sources/EkranbildoRedaction/SecretDetector.swift	            total += doubled > Luhn.largestDigit ? doubled - Luhn.largestDigit : doubled	            total += doubled	SecretDetector: get the card checksum wrong, so real cards are missed
+Sources/EkranbildoRedaction/Redactor.swift	        guard minX < maxX, minY < maxY else { return nil }	        guard true else { return nil }	Redactor: reach outside the picture for a mask that is off the edge
+Sources/EkranbildoRedaction/Redactor.swift	            guard hadAnythingToHide, !changed else { return nil }	            guard hadAnythingToHide else { return nil }	Redactor: report a mask that took as one that did not
+Sources/EkranbildoRedaction/Redactor.swift	                    if masked[x: column, y: row] != before { changed = true }	                    if false { changed = true }	Redactor: pass an export that was never masked
+Sources/EkranbildoRedaction/Redactor.swift	        case .solid, .pixelate: true	        case .solid, .pixelate: false	MaskStyle: claim a solid block leaves something recoverable
+Sources/EkranbildoRedaction/Redactor.swift	        case .blur: false	        case .blur: true	MaskStyle: promise a blur is irreversible
+Sources/EkranbildoRedaction/MaskSuggester.swift	        let x = line.minX + Double(start) * perCharacter - bleed	        let x = line.minX - bleed	MaskSuggester: cover a whole line because part of it is a secret
+Sources/EkranbildoRedaction/MaskSuggester.swift	            y: line.minY - bleed,	            y: line.minY,	MaskSuggester: leave a sliver of the text showing above the mask
+Sources/EkranbildoRedaction/SecretDetector.swift	                #"\b(?:AKIA|ASIA|AROA|AIDA|ANPA|ANVA|ABIA|ACCA)[A-Z0-9]{16}\b"#	                #"\b(?:ZZZZ)[A-Z0-9]{16}\b"#	SecretDetector: miss the key shapes that are shorter than the length rule
+Sources/EkranbildoRedaction/SecretDetector.swift	                #"\b(?:\d{1,3}\.){3}\d{1,3}\b|\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b"#	                #"\b(?:\d{1,3}\.){3}\d{1,3}|\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b"#	SecretDetector: read a version number as a network address
+Sources/EkranbildoExport/Exporter.swift	        return Self.withoutTimestamps([UInt8](data as Data))	        return [UInt8](data as Data)	Exporter: stamp every page with the moment it was written
+Sources/EkranbildoExport/Exporter.swift	                bytes[position] = Markers.filler	                position = position	Exporter: leave the timestamp in place while pretending to blank it
+Sources/EkranbildoExport/Exporter.swift	        guard image.isWellFormed, !image.isEmpty else {	        guard true else {	Exporter: write a file with no picture in it
+Sources/EkranbildoLayout/DecisionTrace.swift	                badge: annotation.badge	                badge: nil	LayoutSolution: drop a step's number while placing it
+Sources/EkranbildoCore/Scene.swift	        let extra = annotation.badge == nil ? 0 : badgeAllowance(style: style)	        let extra = 0.0	LabelMetrics: size a numbered plate as though it had no number
+Sources/EkranbildoCore/Scene.swift	        style.badgeDiameter + style.badgeGap	        style.badgeDiameter	LabelMetrics: run the number into the words after it
+Sources/EkranbildoRender/BadgeGeometry.swift	            ? plate.minX + inset	            ? plate.minX - style.badgeDiameter	BadgeGeometry: put the disc outside the plate
+Sources/EkranbildoRender/DrawListBuilder.swift	                    x: baseline.x + LabelMetrics.badgeAllowance(style: style),	                    x: baseline.x,	DrawListBuilder: draw the words under the disc
+Sources/EkranbildoRender/DrawListBuilder.swift	        guard let badge else { return [] }	        guard let badge = badge ?? BadgeNumber(1) as BadgeNumber? else { return [] }	DrawListBuilder: number an annotation nobody numbered
+Sources/EkranbildoHotkeys/Shortcut.swift	        guard !modifiers.isEmpty else {	        guard false else {	Shortcut: allow a bare key, taking it from every other application
+Sources/EkranbildoHotkeys/Shortcut.swift	        guard !modifiers.contains(.command), !modifiers.contains(.control) else { return nil }	        guard true else { return nil }	Shortcut: warn about combinations that work everywhere
+Sources/EkranbildoHotkeys/Shortcut.swift	        if modifiers.contains(.control) { text += Symbols.control }	        if false { text += Symbols.control }	Shortcut: leave control out of what a shortcut reads as
+Sources/EkranbildoHotkeys/HotkeyRegistry.swift	        UInt32(Self.virtualKeys[key] ?? kVK_ANSI_A)	        UInt32(kVK_ANSI_A)	HotkeyRegistry: register every shortcut on the same key
+Sources/EkranbildoHotkeys/HotkeyRegistry.swift	        if modifiers.contains(.option) { value |= UInt32(optionKey) }	        if modifiers.contains(.option) { value |= UInt32(shiftKey) }	HotkeyRegistry: watch for shift where option was asked for
+Sources/EkranbildoLibrary/Library.swift	            $0.takenAt == $1.takenAt ? $0.id.raw > $1.id.raw : $0.takenAt > $1.takenAt	            $0.takenAt == $1.takenAt ? $0.id.raw > $1.id.raw : $0.takenAt < $1.takenAt	Library: put the oldest capture at the top
+Sources/EkranbildoLibrary/Library.swift	        guard entries.count > limit else { return [] }	        guard false else { return [] }	Library: let the history grow without limit
+Sources/EkranbildoLibrary/Library.swift	        let dropped = Array(entries[limit...])	        let dropped: [LibraryEntry] = []	Library: drop captures without saying which
+Sources/EkranbildoOverlay/Overlay.swift	        guard outcome == nil else { return self }	        guard true else { return self }	Overlay: keep reacting after somebody has already chosen
+Sources/EkranbildoOverlay/Overlay.swift	            width: abs(to.x - from.x),	            width: to.x - from.x,	Overlay: sweep backwards into a region of negative size
+Sources/EkranbildoOverlay/Overlay.swift	        guard !modifiers.contains(.option) else { return swept }	        guard true else { return swept }	Overlay: snap an edge somebody placed deliberately
+Sources/EkranbildoOverlay/Overlay.swift	        guard swept.raw.width < minimumRegion || swept.raw.height < minimumRegion else {	        guard false else {	Overlay: make a region out of a click with an unsteady hand
+Sources/EkranbildoOverlay/Magnifier.swift	                pixels.append(inside ? frozen.image[x: x, y: y] : Self.nothing)	                pixels.append(frozen.image[x: x, y: y])	Magnifier: smear the edge pixel where there is no screen
+Sources/EkranbildoOverlay/Magnifier.swift	        self.across = wanted.isMultiple(of: Parity.even) ? wanted + 1 : wanted	        self.across = wanted	Magnifier: leave the square without a middle
+Sources/EkranbildoOverlay/Magnifier.swift	        guard missing > 0 else { return text }	        guard missing < 0 else { return text }	Magnifier: drop the leading zero from a colour nobody can paste
+Sources/EkranbildoShell/Menu.swift	            items.append(contentsOf: captureItems(enabled: false))	            items.append(contentsOf: captureItems(enabled: canSeeScreen))	Menu: offer a screenshot in the middle of a recording
+Sources/EkranbildoShell/Menu.swift	        library.entries.prefix(Defaults.recentShown).map { entry in	        library.entries.map { entry in	Menu: list every capture ever taken
+Sources/EkranbildoShell/Menu.swift	        items.append(MenuItem(title: "Quit Ekranbildo", command: .quit, shortcut: nil, isEnabled: true))	        items.append(MenuItem(title: "Quit Ekranbildo", command: .quit, shortcut: nil, isEnabled: canSeeScreen))	Menu: make quitting depend on seeing the screen
+Sources/EkranbildoShell/Onboarding.swift	        case .grantedPendingRestart: .restart	        case .grantedPendingRestart: .openSettings	OnboardingStep: send somebody to a checkbox that is already ticked
+Sources/EkranbildoShell/Onboarding.swift	        case .granted: hasCapturedAnything ? .done : .tryIt	        case .granted: .done	OnboardingStep: finish before anybody has captured anything
+Sources/EkranbildoShell/Onboarding.swift	        case .denied: .openSettings	        case .denied: .askForPermission	OnboardingStep: ask again when the system will not ask again
+Sources/EkranbildoInspector/Preference.swift	            guard let picked = chosen[judgement.scene] else {	            guard let picked = chosen[judgement.scene] ?? .some(CandidateID(0)) else {	PreferenceReport: count a scene nobody solved against the solver
+Sources/EkranbildoInspector/Preference.swift	        disagreements = wrong.sorted()	        disagreements = wrong	PreferenceReport: report disagreements in whatever order they arrived
+Sources/EkranbildoInspector/Preference.swift	            if solverSawNoDifference == personSawNoDifference { toleranceAgreed += 1 }	            if solverSawNoDifference != personSawNoDifference { toleranceAgreed += 1 }	PreferenceReport: invert what agreeing about a tolerance means
+Sources/EkranbildoInspector/ComparisonPage.swift	            guard gap <= closeEnough else { continue }	            guard true else { continue }	QuerySelector: ask about decisions the solver was certain of
+Sources/EkranbildoInspector/ComparisonPage.swift	            if chosen.count == count { break }	            if false { break }	QuerySelector: ask more questions than anybody agreed to answer
+Sources/EkranbildoInspector/ComparisonPage.swift	            $0.score == $1.score ? $0.id.raw < $1.id.raw : $0.score < $1.score	            $0.score < $1.score	QuerySelector: leave tied candidates in no particular order
+Sources/EkranbildoTimeline/Timeline.swift	        if moment < .zero { return .zero }	        if false { return .zero }	Timeline: answer nothing when asked about a moment before the start
+Sources/EkranbildoTimeline/Timeline.swift	        guard moment >= appears else { return false }	        guard true else { return false }	AnnotationTrack: draw an annotation before it appears
+Sources/EkranbildoTimeline/Timeline.swift	        return moment <= disappears	        return moment < disappears	AnnotationTrack: flicker at the moment an annotation goes
+Sources/EkranbildoTimeline/Timeline.swift	            duration: .zero,	            duration: .seconds(1),	Timeline: give a still picture a length
+Sources/EkranbildoTimeline/CameraPath.swift	            x: min(max(frame.minX, x), frame.maxX - viewWidth),	            x: x,	CameraPathSolver: let the camera show the edge of the screen
+Sources/EkranbildoTimeline/CameraPath.swift	        let scale = min(1, max(1 / maximumZoom, needed))	        let scale = min(1, needed)	CameraPathSolver: zoom in past the point where pixels run out
+Sources/EkranbildoTimeline/CameraPath.swift	            let leave = Timestamp.seconds(arrive.seconds + minimumRest)	            let leave = arrive	CameraPathSolver: move again before anybody has seen where they were taken
+Sources/EkranbildoTimeline/CameraPath.swift	        return distance / maximumSpeed	        return 0	CameraPathSolver: pan faster than the eye can follow
+Sources/EkranbildoTimeline/CameraPath.swift	                Geo.overlaps(last.focus.raw, event.focus.raw)	                true	CameraPathSolver: treat clicks in different places as one action
+Sources/EkranbildoTimeline/CameraPath.swift	        return clamped * clamped * (3 - 2 * clamped)	        return clamped	CameraPath: start and stop the camera abruptly
+Sources/EkranbildoTimeline/CursorPolish.swift	                pressed: sample.pressed	                pressed: false	CursorPolish: lose a click while smoothing the path it is on
+Sources/EkranbildoTimeline/CursorPolish.swift	            guard index >= window, index < samples.count - window else { return sample }	            guard true else { return sample }	CursorPolish: move the ends of a path away from what was clicked
+Sources/EkranbildoTimeline/CursorPolish.swift	                at: sample.at,	                at: samples[0].at,	CursorPolish: move a sample in time as well as in place
+Sources/EkranbildoTimeline/CursorPolish.swift	            if sample.pressed, !wasPressed {	            if sample.pressed {	CursorPolish: draw a ripple for every frame a button is held
+Sources/EkranbildoTimeline/CursorPolish.swift	        return still >= stillFor ? fadedOpacity : 1	        return 1	CursorPolish: leave a parked cursor at full strength
+Sources/EkranbildoTimeline/DeadTime.swift	                guard window.seconds > longestPause, to > from else { return nil }	                guard to > from else { return nil }	DeadTimeRemover: cut the pause somebody took to think
+Sources/EkranbildoTimeline/DeadTime.swift	                let from = Timestamp.seconds(window.from.seconds + breathingRoom)	                let from = window.from	DeadTimeRemover: cut into the moment something happened
+Sources/EkranbildoTimeline/DeadTime.swift	                guard window.seconds > longestPause, to > from else { return nil }	                guard window.seconds > longestPause else { return nil }	DeadTimeRemover: cut a stretch that has nothing left in it
+Sources/EkranbildoEncode/VideoWriter.swift	                code: EncodeError.nothingToWrite,	                code: EncodeError.writeFailed,	VideoWriter: report having nothing to write as the system giving up
+Sources/EkranbildoEncode/VideoWriter.swift	        self.width = max(Defaults.smallest, width - width % Defaults.evenness)	        self.width = width	EncodeSettings: hand the encoder a size it cannot halve
+Sources/EkranbildoEncode/VideoWriter.swift	            max(minimumBitRate, width * height * bitsPerPixelPerSecond)	            minimumBitRate	EncodeSettings: give a large picture what a small one gets
+Sources/EkranbildoEncode/VideoWriter.swift	        try? FileManager.default.removeItem(at: url)	        _ = url	VideoWriter: append to a file that is already there
+Sources/EkranbildoEncode/VideoWriter.swift	            while !input.isReadyForMoreMediaData {	            while false {	VideoWriter: drop a frame when the encoder is briefly behind
+Sources/EkranbildoCLI/RenderVideoCommand.swift	            input.timings.count == input.source.count	            input.timings.count >= 0	RenderVideoCommand: place frames at moments belonging to other frames
+Sources/EkranbildoCLI/RecordCommand.swift	                    + CanonicalText.rounded(frame.presentedAt.seconds, places: Precision.places)	                    + CanonicalText.rounded(Double(index), places: Precision.places)	RecordCommand: write the frame's number where its moment belongs
+Sources/EkranbildoContracts/ReadingDirection.swift	        case .leftToRight: .w	        case .leftToRight: .e	ReadingDirection: put every label on the far side of what it describes
+Sources/EkranbildoLayout/LayoutProblem.swift	                return reading == .leftToRight ? a.minX < b.minX : a.minX > b.minX	                return a.minX < b.minX	LayoutProblem: read a right-to-left page left to right
+Sources/EkranbildoLayout/LayoutProblem.swift	            guard a.minY != b.minY else {	            guard false else {	LayoutProblem: read a page in columns rather than in lines
+Sources/EkranbildoRender/BadgeGeometry.swift	            : plate.maxX - inset - style.badgeDiameter	            : plate.minX + inset	BadgeGeometry: put the number where a right-to-left reader finishes
+Sources/EkranbildoRender/DrawListBuilder.swift	            baselineOrigin: annotation.badge == nil || reading == .rightToLeft	            baselineOrigin: annotation.badge == nil	DrawListBuilder: draw right-to-left words under the number
+Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift	        static let fallbackFamily = "Helvetica"	        static let fallbackFamily = "A Face Nobody Has Installed"	CoreGraphicsRenderer: fall back to a face that is not there either
+Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift	            family: CTFontCopyFamilyName(fallback) as String,	            family: spec.family,	CoreGraphicsRenderer: report the face that was asked for, not the one used
+Sources/EkranbildoRender/Icons.swift	            x: point.x - hotSpot.x * size,	            x: point.x - size,	Icon: point from the corner of the box instead of from the glyph's own tip
+Sources/EkranbildoRender/Icons.swift	            return P2(x: Unit.pointerTipX, y: Unit.pointerTipY)	            return P2(x: Unit.middle, y: Unit.middle)	Icon: treat the pointer as if it pointed from its middle
+Sources/EkranbildoRender/DrawListBuilder.swift	        guard cursor.opacity > 0 else { return [] }	        guard cursor.opacity >= 0 else { return [] }	DrawListBuilder: draw a pointer nobody can see
+Sources/EkranbildoRender/DrawListBuilder.swift	        commands.append(.fill(outline, faded(style.cursorColor)))	        commands.insert(.fill(outline, faded(style.cursorColor)), at: 0)	DrawListBuilder: hide the pointer's halo under its own body
+Sources/EkranbildoRender/DrawListBuilder.swift	                                alpha: style.rippleColor.alpha * (1 - ripple)	                                alpha: style.rippleColor.alpha	DrawListBuilder: let a click's ring grow without ever fading
+Sources/EkranbildoCapture/PointerSampler.swift	            guard moved || changed || overdue else { return nil }	            guard moved || overdue else { return nil }	PointerSampler: miss the moment a button went down
+Sources/EkranbildoCapture/PointerSampler.swift	            guard moved || changed || overdue else { return nil }	            guard moved || changed else { return nil }	PointerSampler: stop writing the pointer down once it stops moving
+Sources/EkranbildoCapture/PointerSampler.swift	            guard moment > last.at else { return nil }	            guard moment >= last.at else { return nil }	PointerSampler: keep a sample from a clock that went backwards
+Sources/EkranbildoTimeline/CursorTrack.swift	            guard since >= 0, since < span else { continue }	            guard since >= 0, since <= span else { continue }	CursorTrack: show a click's ring for one frame after it has finished
+Sources/EkranbildoTimeline/CursorTrack.swift	            if best.map({ progress < $0 }) ?? true { best = progress }	            if best.map({ progress > $0 }) ?? true { best = progress }	CursorTrack: show the older of two clicks in quick succession
+Sources/EkranbildoTimeline/CursorTrack.swift	        let span = after.at.nanoseconds - before.at.nanoseconds	        let span = Int64(after.at.seconds - before.at.seconds)	CursorTrack: work out where the pointer is in seconds rather than in nanoseconds
+Sources/EkranbildoTimeline/CursorTrack.swift	                    position: geometry.scenePoint(of: $0.position),	                    position: ScenePoint(x: $0.position.x, y: $0.position.y),	CursorTrack: leave the pointer in the screen's coordinates
+Sources/EkranbildoTimeline/Timeline.swift	            cursor: cursor?.cursor(at: inside)	            cursor: cursor?.cursor(at: .zero)	Timeline: leave the pointer where it started for the whole recording
+Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift	            at: Double(image.width) / max(Scale.smallestCanvas, list.canvas.width),	            at: 1,	CoreGraphicsRenderer: draw over a Retina frame at half the size
+Sources/EkranbildoRenderCoreGraphics/ContextSeeding.swift	                bytes[offset + PixelFormat.Offset.blue] = premultiplied(pixel.blue)	                bytes[offset + PixelFormat.Offset.blue] = premultiplied(pixel.red)	ContextSeeding: swap a frame's red and blue on the way into the context
+Sources/EkranbildoRenderCoreGraphics/ContextSeeding.swift	                    UInt8((Int(value) * alpha + Rounding.half) / PixelFormat.maximumChannelValue)	                    value	ContextSeeding: hand the context colour that was never multiplied by its alpha
+Sources/EkranbildoCLI/RenderVideoFrames.swift	        guard end > lastFrame else { return schedule }	        return schedule	RenderVideoCommand: play a recording of a still screen as a flicker
+Sources/EkranbildoCLI/RenderVideoFrames.swift	        guard held <= Int64(limit) else {	        guard held <= Int64.max else {	RenderVideoCommand: hold frames until the memory runs out
+Sources/EkranbildoContracts/Recording.swift	            max(cursor.last?.at ?? first, events.last?.at ?? first)	            first	Recording: measure a recording by its frames alone
+Sources/EkranbildoCore/StyleTokens.swift	            try container.decodeIfPresent(T.self, forKey: key) ?? fallback	            try container.decode(T.self, forKey: key)	StyleTokens: refuse every document written before the newest token existed
+Sources/EkranbildoContracts/Paint.swift	            alpha: try container.decodeIfPresent(Double.self, forKey: .alpha) ?? Self.opaqueAlpha	            alpha: try container.decode(Double.self, forKey: .alpha)	Color: refuse a colour that says nothing about transparency
+Sources/EkranbildoFixtures/PseudoLocalisation.swift	            text.count + Padding.shortest,	            text.count,	PseudoLocalisation: leave short labels the length they already were
+Sources/EkranbildoFixtures/PseudoLocalisation.swift	            accented.append(Self.lookalikes[character] ?? character)	            accented.append(character)	PseudoLocalisation: translate into English
+Sources/EkranbildoFixtures/PseudoLocalisation.swift	        return "[\(accented)\(padding)]"	        return "\(accented)\(padding)"	PseudoLocalisation: hide where a label was cut short
+Sources/EkranbildoEncode/Quantiser.swift	                let score = weight(box) * spread(box)	                let score = spread(box)	Quantiser: spend colours on ranges nothing in the picture occupies
+Sources/EkranbildoEncode/Quantiser.swift	            red += Int(entry.color.red) * entry.count	            red += Int(entry.color.red)	Quantiser: average a box as if every colour in it were equally common
+Sources/EkranbildoEncode/Quantiser.swift	            red: UInt8((red + half) / total),	            red: UInt8(red / total),	Quantiser: darken every palette entry by half a count
+Sources/EkranbildoEncode/Quantiser.swift	            let cut = max(1, min(sorted.count - 1, sorted.count / Split.halves))	            let cut = 1	Quantiser: shave one colour off a box instead of halving it
+Sources/EkranbildoEncode/GIFWriter.swift	        [UInt8(value & Byte.mask), UInt8((value >> Byte.bits) & Byte.mask)]	        [UInt8((value >> Byte.bits) & Byte.mask), UInt8(value & Byte.mask)]	GIFWriter: write every number in a GIF back to front
+Sources/EkranbildoEncode/GIFWriter.swift	            Int((showFor.seconds * Double(Timing.hundredthsPerSecond)).rounded())	            Timing.shortest	GIFWriter: show every frame for as long as the shortest one
+Sources/EkranbildoEncode/GIFWriter.swift	        let flags = UInt8(Flags.globalTable | (indexBits(tableSize) - 1))	        let flags = UInt8(Flags.globalTable)	GIFWriter: claim a colour table of two whatever its size
+Sources/EkranbildoEncode/LZW.swift	                output.append(clear, bits: width)	                output.append(end, bits: width)	LZW: end the picture where the table should have been cleared
+Sources/EkranbildoEncode/LZW.swift	            } else if table.needsWiderCodes(at: width) {	            } else if false {	LZW: keep writing codes too wide for the width they are written in
+Sources/EkranbildoEncode/LZW.swift	        if let current { output.append(current, bits: width) }	        if false, let current { output.append(current, bits: width) }	LZW: drop the last run of pixels in every frame
+Sources/EkranbildoTimeline/CameraPath.swift	        return ordered(solved.filter { !taken.contains($0.at) } + pinned)	        return ordered(solved + pinned)	CameraPathSolver: keep the solver's own answer beside the one somebody pinned
+Sources/EkranbildoTimeline/CameraPath.swift	                byMoment[existing] = (at, override.view)	                byMoment.append((at, override.view))	CameraPathSolver: pin two views to one moment
+Sources/EkranbildoTimeline/CameraPath.swift	            let at = Timeline.clamped(override.at, to: duration)	            let at = override.at	CameraPathSolver: pin a view past the end of the recording
+Sources/EkranbildoCLI/CameraCommand.swift	            try container.decodeIfPresent([CameraOverride].self, forKey: .overrides) ?? []	            []	CameraCommand: ignore everything somebody pinned
+Sources/EkranbildoTimeline/TimelineInteractor.swift	            return Outcome(state: state.with(playhead: Timeline.clamped(moment, to: state.duration)))	            return Outcome(state: state.with(playhead: moment))	TimelineInteractor: let the playhead run off the end of the recording
+Sources/EkranbildoTimeline/TimelineInteractor.swift	            return Outcome(state: state.with(playhead: found.at, selected: .some(found.at)))	            return Outcome(state: state.with(selected: .some(found.at)))	TimelineInteractor: select a keyframe without going to look at it
+Sources/EkranbildoTimeline/TimelineInteractor.swift	            let remaining = state.overrides.filter { $0.at != selected }	            let remaining = state.overrides	TimelineInteractor: leave a copy behind when a keyframe is dragged
+Sources/EkranbildoTimeline/TimelineInteractor.swift	        (overrides.filter { $0.at != moment } + [CameraOverride(at: moment, view: view)])	        (overrides + [CameraOverride(at: moment, view: view)])	TimelineInteractor: pin a second camera to a moment that already has one
+Sources/EkranbildoTimeline/TimelineInteractor.swift	            .sorted { $0.at < $1.at }	            .sorted { $0.view.minX < $1.view.minX }	TimelineInteractor: order keyframes by where the camera looks rather than when
+Sources/EkranbildoCLI/RenderVideoCommand.swift	        guard pixels <= pixelBudget else {	        guard pixels <= Int.max else {	RenderVideoCommand: assemble a video no machine could hold
+Sources/EkranbildoEncode/VideoWriter.swift	            frame = try next()	            frame = nil	VideoWriter: write only the first frame of every video
+Sources/EkranbildoEncode/VideoWriter.swift	            duration: last,	            duration: first.at,	VideoWriter: report every video as lasting until its first frame
+Sources/EkranbildoCore/Synthesis.swift	            let alphabet = Alphabet.like(character)	            let alphabet = Alphabet.letters	Synthesis: stand in for a full-width word with one half its width
+Sources/EkranbildoCore/Synthesis.swift	                result.append(" ")	                continue	Synthesis: drop the spaces a label's lines break at
+Sources/EkranbildoCore/Synthesis.swift	            result.append(alphabet[Int(generator.next() % UInt64(alphabet.count))])	            result.append(character)	Synthesis: leave somebody's words in the bundle they are sending
+Sources/EkranbildoCore/Synthesis.swift	            background: scene.background.map(synthesised),	            background: scene.background,	Synthesis: leave somebody's screenshot in the bundle they are sending
+Sources/EkranbildoCore/Synthesis.swift	            hash ^= UInt64(byte)	            hash ^= 0	Synthesis: give every label in a scene the same stand-in
+Sources/EkranbildoCore/Synthesis.swift	            pixelWidth: image.pixelWidth,	            pixelWidth: 1,	Synthesis: forget the size the layout was solved against
+Sources/EkranbildoInspector/Counterfactual.swift	            let strength = ObjectiveGroup.allCases.first(where: { wanted[$0] < chosen[$0] })	            let strength = ObjectiveGroup.allCases.first(where: { wanted[$0] <= chosen[$0] })	Counterfactual: promise a candidate can win where it is merely not worse
+Sources/EkranbildoInspector/Counterfactual.swift	        for group in ObjectiveGroup.allCases where group.rawValue < strength.rawValue {	        for group in ObjectiveGroup.allCases {	Counterfactual: ask for a group past the one that would decide to stop deciding
+Sources/EkranbildoInspector/Counterfactual.swift	        max(first, second) * Widening.margin	        max(first, second)	Counterfactual: report a tolerance that leaves the group still deciding
+Sources/EkranbildoInspector/Counterfactual.swift	            if difference == 0 {	            if difference == 1 {	Counterfactual: ask for a group that was already tied to be widened
+Sources/EkranbildoTestKit/GoldenStore.swift	        if let version, let moved = PipelineVersion.stamp(recordedVersion, matches: version) {	        if false, let version, let moved = PipelineVersion.stamp(recordedVersion, matches: version) {	GoldenStore: report a golden from another pipeline as a defect
+Sources/EkranbildoTestKit/GoldenStore.swift	        guard first.hasPrefix(Stamp.prefix) else { return (nil, recorded) }	        guard !first.isEmpty else { return (nil, recorded) }	GoldenStore: read a golden's own first line as the build that made it
+Sources/EkranbildoTestKit/GoldenStore.swift	            return .incomparable(recorded: moved, now: version.canonicalText)	            return .matched	GoldenStore: pass a test whose golden could not be compared
+Sources/EkranbildoContracts/PipelineVersion.swift	        guard let recorded, recorded != current.canonicalText else { return nil }	        guard let recorded, recorded == current.canonicalText else { return nil }	PipelineVersion: refuse to compare a golden from the very same build
+Sources/EkranbildoContracts/Contrast.swift	                : pow((channel + Luminance.offset) / (1 + Luminance.offset), Luminance.gamma)	                : channel	Color: measure brightness without the curve the eye actually has
+Sources/EkranbildoContracts/Contrast.swift	            channel <= Luminance.kink	            channel <= 0	Color: use the power law where the published curve is a straight line
+Sources/EkranbildoContracts/Contrast.swift	        return (lighter + Contrast.offset) / (darker + Contrast.offset)	        return lighter / darker	Color: divide by nothing when both colours are black
+Sources/EkranbildoContracts/Contrast.swift	            green: mix(green, background.green),	            green: background.green,	Color: lose a channel when compositing over something
+Sources/EkranbildoCore/StyleTokens.swift	        labelContrast >= Readability.required && badgeContrast >= Readability.required	        labelContrast >= Readability.required	StyleTokens: call a style readable when its step numbers are not
+Sources/EkranbildoContracts/ColorVision.swift	    static func atLeastNothing(_ response: Double) -> Double { max(0, response) }	    static func atLeastNothing(_ response: Double) -> Double { response }	ColorVision: let a cone respond less than not at all
+Sources/EkranbildoContracts/ColorVision.swift	        guard vision != .typical else { return self }	        guard vision == .typical else { return self }	ColorVision: simulate a deficiency for somebody who has none
+Sources/EkranbildoContracts/ColorVision.swift	            long: 17.882_4 * linear.red + 43.516_1 * linear.green + 4.119_35 * linear.blue,	            long: 0.313_9 * linear.red + 0.639_5 * linear.green + 0.046_6 * linear.blue,	ColorVision: normalise the matrix the substitutions were fitted against
+Sources/EkranbildoContracts/ColorVision.swift	            red: Transfer.toLinear(red),	            red: red,	ColorVision: give the cones the stored numbers rather than the light
+Sources/EkranbildoCore/StyleTokens.swift	        labelColor.seen(with: vision)	        labelColor	StyleTokens: ask how readable a style is and forget who is looking
+Sources/EkranbildoCore/UnknownKeys.swift	        for key in container.allKeys where !known.contains(key.stringValue) {	        for key in container.allKeys where known.contains(key.stringValue) {	UnknownKeys: carry the keys this version does understand
+Sources/EkranbildoCore/UnknownKeys.swift	        guard !isEmpty else { return }	        guard isEmpty else { return }	UnknownKeys: drop what a later version wrote
+Sources/EkranbildoCore/UnknownKeys.swift	        self.entries = entries.sorted { $0.key < $1.key }	        self.entries = entries	UnknownKeys: save a document in a different order each time
+Sources/EkranbildoCore/Scene.swift	        try unknownKeys.write(to: encoder)	        _ = unknownKeys	Scene: lose a later version's work when an older one saves
+Sources/EkranbildoCLI/Bisection.swift	        guard try differs(newest) else {	        guard try !differs(newest) else {	Bisection: decide there is nothing to find whenever there is
+Sources/EkranbildoCLI/Bisection.swift	            outcome: .found(version: versions[differing], previous: versions[agreeing]),	            outcome: .found(version: versions[agreeing], previous: versions[differing]),	Bisection: blame the build before the one that changed
+Sources/EkranbildoCLI/Bisection.swift	            if try differs(versions[middle]) {	            if try !differs(versions[middle]) {	Bisection: search the half the answer is not in
+Sources/EkranbildoCLI/Bisection.swift	        guard try !differs(oldest) else {	        guard try differs(oldest) else {	Bisection: report a recording older than the range as a boundary
+Sources/EkranbildoCore/ReplayBundle.swift	        guard pipeline == running else {	        guard pipeline != running else {	ReplayBundle: compare answers from builds that decide differently
+Sources/EkranbildoCore/ReplayBundle.swift	        for recorded in answer where !now.contains(where: { $0.annotation == recorded.annotation }) {	        for recorded in answer where now.contains(where: { $0.annotation == recorded.annotation }) {	ReplayBundle: miss a placement that has vanished entirely
+Sources/EkranbildoCore/ReplayBundle.swift	        guard bundle.format <= currentFormat else {	        guard bundle.format >= currentFormat else {	ReplayBundle: read a bundle written by a later format
+Sources/EkranbildoCore/ReplayBundle.swift	        return .changed(changes.sorted { $0.annotation.raw < $1.annotation.raw })	        return .changed(changes)	ReplayBundle: report changes in whatever order they were found
+Sources/EkranbildoContracts/Fingerprint.swift	            hash ^= UInt32(byte)	            hash |= UInt32(byte)	Fingerprint: fold bytes together so different inputs collide
+Sources/EkranbildoLayout/CalibrationVersion.swift	            bytes.append(Separator.betweenConstants)	            bytes.append(contentsOf: [] as [UInt8])	CalibrationVersion: run constants together with no separator
+Sources/EkranbildoLayout/LayoutVersion.swift	                [CalibrationConstant(name: "term", value: Double(term.name.count))]	                [CalibrationConstant]()	LayoutVersion: leave the term name out of the version
+Sources/EkranbildoRender/RenderVersion.swift	        "draw-" + Fingerprint.of(DrawListBuilder(measurer: FixedMetrics()).build(scene).canonicalText)	        "draw-" + Fingerprint.of("")	RenderVersion: name a renderer without looking at what it draws
+Sources/EkranbildoCore/Scene.swift	            unknownKeys: unknownKeys	            unknownKeys: .nothing	Scene: lose what an edit did not understand
+Sources/EkranbildoCore/Synthesis.swift	            unknownKeys: .nothing	            unknownKeys: scene.unknownKeys	Synthesis: put keys nobody could read into a bug report
+Sources/EkranbildoTestHooks/HookChannel.swift	        guard bytes.count - start >= length else {	        guard bytes.count - start <= length else {	HookChannel: act on half a message that is still arriving
+Sources/EkranbildoTestHooks/HookChannel.swift	        "\(head) \(payload.utf8.count)\(Format.newline)\(payload)"	        "\(head) \(payload.count)\(Format.newline)\(payload)"	HookChannel: count characters where the format counts bytes
+Sources/EkranbildoTestHooks/HookChannel.swift	            return .ok(try handler.handle(request.payload))	            return .failed(try handler.handle(request.payload))	HookChannel: report every command as having failed
+Sources/EkranbildoTestHooks/HookSession.swift	            if outcome.effects.contains(.checkpoint) {	            if !outcome.effects.contains(.checkpoint) {	HookSession: remember the scene at every moment except the ones that changed it
+Sources/EkranbildoTestHooks/HookSession.swift	        guard step.nanoseconds >= 0 else {	        guard step.nanoseconds <= 0 else {	HookSession: let a test wind the clock backwards
+Sources/EkranbildoObservability/Ticks.swift	    public var next: Ticks { current }	    public var next: Ticks { current.advanced(by: step) }	Ticks: report the time after next as the time now
+Sources/EkranbildoObservability/TraceValue.swift	        case .borrowed(let text): .borrowed(replacing(text))	        case .borrowed(let text): .borrowed(text)	TraceValue: send somebody's own words in a bundle said to have none
+Sources/EkranbildoObservability/TraceValue.swift	        case .string, .int, .double, .bool: self	        case .string, .int, .double, .bool: .string("")	TraceValue: empty a bundle of the reason codes it was sent to explain
+Sources/EkranbildoObservability/TraceValue.swift	        case .list(let values): .list(values.map { $0.synthesised(replacing) })	        case .list(let values): .list(values)	TraceValue: leave borrowed words inside a list untouched
+Sources/EkranbildoObservability/TraceSynthesis.swift	            } else if character == Mark.escape {	            } else if character == Mark.quote {	TraceSynthesis: mistake an escaped quote for the end of somebody's text
+Sources/EkranbildoObservability/CanonicalText.swift	        if escaping { result.append("\\") }	        if escaping { return result }	CanonicalText: lose a trailing backslash on the way back
+Sources/EkranbildoCLI/AnnotateCommand.swift	                    ("label", .borrowed(mark.label)),	                    ("label", .string(mark.label)),	AnnotateCommand: put the words somebody typed in as the program's own
+Sources/EkranbildoObservability/TraceSynthesis.swift	                output += text[index...]	                output += ""	TraceSynthesis: drop the tail of a truncated trace
+Sources/EkranbildoObservability/TraceLog.swift	        signposts.ended(span.name)	        signposts.began(span.name)	Signposts: end every interval by starting another one
+Sources/EkranbildoObservability/TraceLog.swift	        signposts.happened(name)	        signposts.began(name)	Signposts: turn every event into an interval that never closes
+Sources/EkranbildoSignposts/SystemSignposts.swift	            ? SystemSignposts() : NoSignposts()	            ? NoSignposts() : SystemSignposts()	Signposting: talk to the system unless somebody asked for it
+Sources/EkranbildoRender/LayeredDrawList.swift	            if moving.contains(annotation.id) {	            if !moving.contains(annotation.id) {	LayeredDrawList: repaint everything except what is moving
+Sources/EkranbildoRender/LayeredDrawList.swift	            guard let placement = annotation.placement else { continue }	            let placement = annotation.placement ?? Placement(direction: .n, leaderLength: 0)	LayeredDrawList: draw an unplaced annotation somewhere arbitrary
+Sources/EkranbildoContracts/DrawList.swift	            guard let commandBounds = command.bounds?.raw else { continue }	            guard let commandBounds = command.bounds?.raw else { return nil }	DrawList: stop measuring at the first command that covers nothing
+Sources/EkranbildoShell/Settings.swift	            settings.captureShortcut = Defaults.captureShortcut	            settings.captureShortcut = settings.captureShortcut	Settings: keep a shortcut the system would refuse
+Sources/EkranbildoShell/Settings.swift	        if settings.libraryLimit < smallestLibrary {	        if settings.libraryLimit > smallestLibrary {	Settings: reset every history size except the impossible one
+Sources/EkranbildoShell/Settings.swift	        if !(settings.exportScale > 0) || !settings.exportScale.isFinite {	        if !(settings.exportScale > 0) && !settings.exportScale.isFinite {	Settings: accept an export scale of zero
+Sources/EkranbildoShell/Settings.swift	        try settings.unknownKeys.write(to: encoder)	        _ = settings.unknownKeys	Settings: lose a choice a later version wrote
+Sources/EkranbildoShell/Settings.swift	        public static let sendsDiagnostics = false	        public static let sendsDiagnostics = true	Settings: send a picture of somebody's screen by default

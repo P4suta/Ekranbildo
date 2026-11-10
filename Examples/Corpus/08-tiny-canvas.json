@@ -1,0 +1,55 @@
+{
+  "canvas": {
+    "raw": {
+      "origin": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "width": 240,
+        "height": 180
+      }
+    }
+  },
+  "background": null,
+  "annotations": [
+    {
+      "id": {
+        "raw": 1
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 90,
+            "y": 70
+          },
+          "size": {
+            "width": 60,
+            "height": 28
+          }
+        }
+      },
+      "label": "Cramped",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 2
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 40,
+            "y": 130
+          },
+          "size": {
+            "width": 50,
+            "height": 24
+          }
+        }
+      },
+      "label": "Also here",
+      "placement": null
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "canvas": { "raw": { "origin": { "x": 0, "y": 0 }, "size": { "width": 560, "height": 360 } } },
+  "background": null,
+  "annotations": [
+    { "id": { "raw": 1 },
+      "target": { "raw": { "origin": { "x": 70, "y": 60 }, "size": { "width": 150, "height": 30 } } },
+      "label": "Search field", "placement": null },
+    { "id": { "raw": 2 },
+      "target": { "raw": { "origin": { "x": 400, "y": 240 }, "size": { "width": 100, "height": 36 } } },
+      "label": "保存", "placement": null },
+    { "id": { "raw": 3 },
+      "target": { "raw": { "origin": { "x": 250, "y": 160 }, "size": { "width": 48, "height": 48 } } },
+      "label": "Toggle", "placement": null },
+    { "id": { "raw": 4 },
+      "target": { "raw": { "origin": { "x": 90, "y": 270 }, "size": { "width": 120, "height": 28 } } },
+      "label": "Status bar", "placement": null }
+  ]
+}

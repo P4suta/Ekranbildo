@@ -1,0 +1,1374 @@
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Geo.swift"
+find = "o1 != o2 && o3 != o4 && o1 != 0 && o2 != 0 && o3 != 0 && o4 != 0"
+replace = "o1 != o2 && o3 != o4"
+reason = "properIntersect: stop excluding endpoint contact"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Geo.swift"
+find = "midpoint.x > rect.minX + tolerance && midpoint.x < rect.maxX - tolerance"
+replace = "midpoint.x >= rect.minX - tolerance && midpoint.x <= rect.maxX + tolerance"
+reason = "interior: relax the strict X containment of the midpoint"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Geo.swift"
+find = "min(a.maxX, b.maxX) - max(a.minX, b.minX)"
+replace = "max(a.maxX, b.maxX) - min(a.minX, b.minX)"
+reason = "overlapArea: take the union span instead of the intersection span"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Direction16.swift"
+find = "Int(Self.count) + Int(Self.halfTurn) - Int(rawValue)"
+replace = "Int(Self.count) - Int(rawValue)"
+reason = "Direction16: swap the horizontal mirror for the vertical one"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Direction16.swift"
+find = "Self(rawValue: (rawValue + Self.halfTurn) % Self.count)!"
+replace = "Self(rawValue: (rawValue + Self.halfTurn / 2) % Self.count)!"
+reason = "Direction16: opposite rotates by a quarter turn"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Direction16.swift"
+find = "min(raw, Int(Self.count) - raw)"
+replace = "raw"
+reason = "stepDistance: forget the circular wrap"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Determinism.swift"
+find = "static let increment: UInt64 = 0x9E37_79B9_7F4A_7C15"
+replace = "static let increment: UInt64 = 0x9E37_79B9_7F4A_7C16"
+reason = "SplitMix64: perturb the golden-ratio increment"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Determinism.swift"
+find = "folded.append(buffer[index] + buffer[index + 1])"
+replace = "folded.append(buffer[index])"
+reason = "DeterministicSum: drop half of every fold"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceValue.swift"
+find = "lhs.key == rhs.key ? lhs.offset < rhs.offset : lhs.key < rhs.key"
+replace = "lhs.key == rhs.key ? lhs.offset < rhs.offset : lhs.key > rhs.key"
+reason = "TraceAttributes: sort keys descending"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceValue.swift"
+find = "deduplicated[deduplicated.count - 1] = Entry(key: item.key, value: item.value)"
+replace = "break"
+reason = "TraceAttributes: let the first duplicate win instead of the last"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/Ticks.swift"
+find = "TickInterval(nanoseconds: nanoseconds - earlier.nanoseconds)"
+replace = "TickInterval(nanoseconds: earlier.nanoseconds - nanoseconds)"
+reason = "Ticks: reverse the direction of an interval"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/Diagnostics.swift"
+find = "private static let minimumDigits = 4"
+replace = "private static let minimumDigits = 3"
+reason = "DiagnosticCode: pad to three digits instead of four"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceLog.swift"
+find = "openSpans.append("
+replace = "openSpans.insert("
+reason = "TraceLog: treat the span stack as a queue"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/CoordinateSpaces.swift"
+find = "x: (point.x - bounds.minX) * backingScale"
+replace = "x: (point.x - bounds.minX) / backingScale"
+reason = "DisplayGeometry: divide by the backing scale instead of multiplying"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/CoordinateSpaces.swift"
+find = "ImagePixel(x: point.x * backingScale, y: point.y * backingScale)"
+replace = "ImagePixel(x: point.x, y: point.y)"
+reason = "CaptureGeometry: ignore the backing scale when producing image pixels"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/CoordinateSpaces.swift"
+find = "ScenePoint(x: point.x - regionInScreen.minX, y: point.y - regionInScreen.minY)"
+replace = "ScenePoint(x: point.x, y: point.y)"
+reason = "CaptureGeometry: forget to offset by the captured region"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/CoordinateSpaces.swift"
+find = "ScreenPoint(x: point.x, y: primaryDisplayHeight - point.y)"
+replace = "ScreenPoint(x: point.x, y: point.y)"
+reason = "AppKitCoordinates: skip the vertical flip entirely"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/DrawList.swift"
+find = "SpaceRect(pathBounds.raw.inset(by: -stroke.width / 2))"
+replace = "SpaceRect(pathBounds.raw)"
+reason = "DrawCommand: forget that a stroke spills outside its path"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/DrawPath.swift"
+find = "max(0, min(cornerRadius, limit))"
+replace = "max(0, cornerRadius)"
+reason = "Path: stop clamping the corner radius"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Paint.swift"
+find = "y: baselineOrigin.y - metrics.ascent,"
+replace = "y: baselineOrigin.y + metrics.ascent,"
+reason = "TextRun: measure the box downward from the baseline"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Paint.swift"
+find = "static let places = 3"
+replace = "static let places = 6"
+reason = "DrawListFormat: change the golden number precision"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Paint.swift"
+find = "\"#\\(channel(red))\\(channel(green))\\(channel(blue))\\(channel(alpha))\""
+replace = "\"#\\(channel(blue))\\(channel(green))\\(channel(red))\\(channel(alpha))\""
+reason = "Color: swap the red and blue channels"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/DrawList.swift"
+find = "min(current.minX, commandBounds.minX)"
+replace = "max(current.minX, commandBounds.minX)"
+reason = "DrawList: intersect command bounds instead of uniting them"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/CanonicalText.swift"
+find = "(value * scale).rounded()"
+replace = "(value * scale)"
+reason = "CanonicalText: truncate instead of rounding"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/CoordinateSpaces.swift"
+find = "\"\\(Space.name)\\(DrawListFormat.point(self))\""
+replace = "\"\\(DrawListFormat.point(self))\""
+reason = "SpacePoint: drop the space name from trace output"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoFixtures/FakeCapabilities.swift"
+find = "Self.isWide(character) ? wideAdvanceRatio : defaultAdvanceRatio"
+replace = "defaultAdvanceRatio"
+reason = "TabulatedTextMeasurer: measure wide characters as narrow"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoFixtures/FakeCapabilities.swift"
+find = "total.add(ratio(for: character) * font.size)"
+replace = "total.add(ratio(for: character))"
+reason = "TabulatedTextMeasurer: ignore the font size"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoFixtures/FakeCapabilities.swift"
+find = "storedNames.firstIndex { $0 > name } ?? storedNames.count"
+replace = "storedNames.count"
+reason = "InMemoryFileStore: append instead of inserting in sorted order"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = "P2(x: tail.x + outward.x * toEdge, y: tail.y + outward.y * toEdge)"
+replace = "P2(x: tail.x - outward.x * toEdge, y: tail.y - outward.y * toEdge)"
+reason = "ResolvedPlacement: put the label on the target's side of the tail"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = "width: textSize.width + 2 * style.labelPaddingHorizontal,"
+replace = "width: textSize.width,"
+reason = "ResolvedPlacement: drop the horizontal label padding"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/DrawListBuilder.swift"
+find = "x: apex.x + outward.x * style.arrowheadLength,"
+replace = "x: apex.x - outward.x * style.arrowheadLength,"
+reason = "DrawListBuilder: point the arrowhead backwards"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = ") + style.tipGap"
+replace = ") - style.tipGap"
+reason = "ResolvedPlacement: put the tip inside the target instead of clear of it"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = "min(horizontal, vertical)"
+replace = "max(horizontal, vertical)"
+reason = "BoxGeometry: leave the box through the wrong edge"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift"
+find = "context.scaleBy(x: CGFloat(scale), y: CGFloat(-scale))"
+replace = "context.scaleBy(x: CGFloat(scale), y: CGFloat(scale))"
+reason = "CoreGraphicsRenderer: stop flipping the Y axis"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift"
+find = "substituted: true"
+replace = "substituted: false"
+reason = "CoreGraphicsRenderer: never report a font substitution"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = "style = try container.decodeIfPresent(StyleTokens.self, forKey: .style) ?? .standard"
+replace = "style = .standard"
+reason = "Scene: ignore an explicitly given style"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoField/OccupancyField.swift"
+find = "- table[minRow * stride + maxColumn + 1]"
+replace = "+ table[minRow * stride + maxColumn + 1]"
+reason = "OccupancyField: flip a sign in the summed-area query"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoField/OccupancyField.swift"
+find = "planes[plane][index] = min(1, added)"
+replace = "planes[plane][index] = added"
+reason = "OccupancyFieldBuilder: let stacked weights exceed one"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoField/OccupancyField.swift"
+find = "0.5"
+replace = "0.0"
+reason = "OccupancyField: sample corridors at segment starts instead of cell centres"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoField/OccupancyField.swift"
+find = "weight * (covered / cellArea)"
+replace = "weight"
+reason = "OccupancyFieldBuilder: ignore fractional cell coverage"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/HardConstraints.swift"
+find = "problem.canvas.raw.inset(by: margin).contains(candidate.labelRect.raw)"
+replace = "problem.canvas.raw.contains(candidate.labelRect.raw)"
+reason = "LabelInsideCanvas: drop the safety margin"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/HardConstraints.swift"
+find = "!Geo.polylinesConflict(first.leader, second.leader)"
+replace = "true"
+reason = "LeadersDoNotCross: allow every collision"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/CandidateGeneration.swift"
+find = "static let identifierStride: UInt32 = 10_000"
+replace = "static let identifierStride: UInt32 = 0"
+reason = "GridCandidateGenerator: collide identifiers between annotations"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/Scoring.swift"
+find = "(score / tolerance).rounded(.down)"
+replace = "score"
+reason = "LexicographicComparator: ignore the group tolerances"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/Scoring.swift"
+find = "result: difference < 0 ? .orderedAscending : .orderedDescending"
+replace = "result: difference < 0 ? .orderedDescending : .orderedAscending"
+reason = "LexicographicComparator: treat a higher badness as better"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/Scoring.swift"
+find = "result = tieBreak.0 < tieBreak.1 ? .orderedAscending : .orderedDescending"
+replace = "result = .orderedSame"
+reason = "LexicographicComparator: leave complete ties unordered"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/ScoreTerms.swift"
+find = "candidate.placement.direction.isAxisAligned ? Self.penalty : .best"
+replace = "Self.penalty"
+reason = "AxisAlignment: penalise every direction equally"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/ScoreTerms.swift"
+find = "Self.calibration.normalize((own / nearestOther).squareRoot())"
+replace = "Self.calibration.normalize((nearestOther / own).squareRoot())"
+reason = "TargetAmbiguity: invert the distance ratio"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/ExactSolver.swift"
+find = "options.first { $0.candidate.id != winner?.candidate.id }"
+replace = "options.first"
+reason = "ExactSolver: explain the winner against itself"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoInspector/QualityMetrics.swift"
+find = "where Geo.overlaps(placements[outer].labelRect.raw, placements[inner].labelRect.raw) {"
+replace = "where false {"
+reason = "QualityMetrics: never notice overlapping labels"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoInspector/CorpusRunner.swift"
+find = "$0.concern == $1.concern ? $0.name < $1.name : $0.concern > $1.concern"
+replace = "$0.name < $1.name"
+reason = "CorpusRunner: sort alphabetically instead of by concern"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoInspector/CorpusRunner.swift"
+find = "static let defect: Double = 1_000"
+replace = "static let defect: Double = 1"
+reason = "CorpusRunner: let small concerns outweigh a real defect"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoInspector/CorpusRunner.swift"
+find = "concern: .infinity,"
+replace = "concern: 0,"
+reason = "CorpusRunner: sort failures to the bottom"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoGeometry/Geo.swift"
+find = "high - low > tolerance"
+replace = "false"
+reason = "Geo: stop detecting collinear overlap"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/EdgeMap.swift"
+find = "min(1, magnitude / Sobel.fullContrastEdge)"
+replace = "min(1, magnitude)"
+reason = "EdgeMap: stop normalising the gradient magnitude"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/EdgeMap.swift"
+find = "result[row * width + column] = strength < Defaults.noiseFloor ? 0 : strength"
+replace = "result[row * width + column] = strength"
+reason = "EdgeMap: let floating-point residue through as edge strength"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/RegionDetector.swift"
+find = "Self.isSimilar(candidate, seed, tolerance: globalTolerance)"
+replace = "true"
+reason = "RegionDetector: drop the drift-from-seed check"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/RegionDetector.swift"
+find = "private static let neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1)]"
+replace = "private static let neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]"
+reason = "RegionDetector: go eight-connected and leak through corners"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/ElementDetector.swift"
+find = ": $0.rect.raw.area > $1.rect.raw.area"
+replace = ": $0.rect.raw.area < $1.rect.raw.area"
+reason = "ElementDetector: return smallest-area first"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/LayoutProblem.swift"
+find = "weight: element.confidence * Weights.forCovering(element.kind),"
+replace = "weight: 0,"
+reason = "LayoutProblem: let detected elements contribute nothing"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/TargetSnapper.swift"
+find = "rect.raw.contains(previous.raw)"
+replace = "true"
+reason = "TargetSnapper: let a rung sit beside the one below instead of around it"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/TargetSnapper.swift"
+find = ".filter { $0.raw.contains(point.raw) }"
+replace = ".filter { _ in true }"
+reason = "TargetSnapper: offer readings that do not contain the click"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/TargetSnapper.swift"
+find = "ladder[((index % count) + count) % count]"
+replace = "ladder[index % count]"
+reason = "TargetSnapper: trap instead of cycling backwards"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoInspector/HTMLText.swift"
+find = "result += \"&lt;\""
+replace = "result.append(\"<\")"
+reason = "HTMLText: stop escaping angle brackets"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/FlagScanner.swift"
+find = "flags.last { $0.name == name }?.value"
+replace = "flags.first { $0.name == name }?.value"
+reason = "FlagScanner: let the first use of a flag win over the last"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/ScreenElementListing.swift"
+find = ".joined(separator: \" \")"
+replace = ".joined(separator: \"\")"
+reason = "ScreenElement: run the listing fields together"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/SceneSemantics.swift"
+find = "y: (1 - (y + height)) * size.height,"
+replace = "y: y * size.height,"
+reason = "NormalizedBox: read recogniser boxes upside down"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/SceneSemantics.swift"
+find = "min(columns - 1, Int(acrossCanvas * Double(columns)))"
+replace = "Int(acrossCanvas * Double(columns))"
+reason = "SaliencyMap: let the far edge fall past the last cell"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/SceneSemantics.swift"
+find = "public var isWellFormed: Bool { !isEmpty && values.count == columns * rows }"
+replace = "public var isWellFormed: Bool { !isEmpty }"
+reason = "SaliencyMap: trust a map that does not match its own shape"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/LayoutProblem.swift"
+find = "weight: saliency[column: column, row: row] * Weights.saliency,"
+replace = "weight: 0,"
+reason = "LayoutProblem: let saliency contribute nothing"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/CombinedSemanticProvider.swift"
+find = "providers.map(\\.version).joined(separator: \"+\")"
+replace = "providers.first?.version ?? \"\""
+reason = "CombinedSemanticProvider: name only the first detector in the version"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoImaging/ImageCodec.swift"
+find = "space: CoreGraphicsColorSpace.resolve(destination),"
+replace = "space: CoreGraphicsColorSpace.resolve(.sRGB),"
+reason = "ImageCodec: decode into one space and label it another"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoImaging/ImageCodec.swift"
+find = "colorSpace: image.colorSpace,"
+replace = "colorSpace: .sRGB,"
+reason = "ImageCodec: write every picture out labelled sRGB"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/TransferFunction.swift"
+find = "(1 + Curve.offset) * pow(value, 1 / Curve.exponent) - Curve.offset"
+replace = "(1 + Curve.offset) * pow(value, Curve.exponent) - Curve.offset"
+reason = "TransferFunction: invert the curve with the wrong exponent"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSemantics/CombinedSemanticProvider.swift"
+find = "!lines.contains { $0.rect.raw.contains(element.rect.raw) }"
+replace = "!lines.contains { Geo.overlaps($0.rect.raw, element.rect.raw) }"
+reason = "CombinedSemanticProvider: drop anything that merely crosses a line of text"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCapture/ScreenCaptureKitCapturer.swift"
+find = "Double(pixels) / Double(points)"
+replace = "Double(points) / Double(pixels)"
+reason = "ScreenCaptureKitCapturer: invert the backing scale"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/AssetStore.swift"
+find = "[image.width, image.height]"
+replace = "[image.width * image.height]"
+reason = "ContentHash: give a picture and its transpose the same name"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/AssetStore.swift"
+find = "hash &*= Constants.prime"
+replace = "hash &*= 1"
+reason = "ContentHash: stop mixing, so every picture hashes the same"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRenderCoreGraphics/DrawingPictures.swift"
+find = "context.scaleBy(x: 1, y: -1)"
+replace = "context.scaleBy(x: 1, y: 1)"
+reason = "CoreGraphicsRenderer: draw stored pictures upside down"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/LayoutProblem.swift"
+find = "text"
+replace = "detectedElement"
+reason = "LayoutProblem: charge the same for covering words as for a surface"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/AnnotateCommand.swift"
+find = "snapper.targets(among: elements, at: mark.point).first"
+replace = "snapper.targets(among: elements, at: mark.point).last"
+reason = "AnnotateCommand: snap a click to the whole screen rather than the control"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/FlagScanner.swift"
+find = "flags.filter { $0.name == name }.map(\\.value)"
+replace = "flags.filter { $0.name == name }.map(\\.value).reversed()"
+reason = "FlagScanner: hand back repeated values in reverse"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoStitch/Stitcher.swift"
+find = "!ignoring.contains(firstStart + index) && !ignoring.contains(secondStart + index)"
+replace = "!ignoring.contains(firstStart + index)"
+reason = "Stitcher: exclude the pinned band from one frame only"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoStitch/Stitcher.swift"
+find = "(max(0, min(1, covariance.value() / spread)), used)"
+replace = "(max(0, min(1, covariance.value())), used)"
+reason = "Stitcher: compare brightness instead of shape"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoStitch/Joining.swift"
+find = "uncertain.append("
+replace = "_ = Array<UncertainJoin>(arrayLiteral:"
+reason = "Stitcher: join a fast scroll silently"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoFixtures/ScrollSimulator.swift"
+find = "Int(generator.next() % UInt64(span)) - noise"
+replace = "0"
+reason = "ScrollSimulator: stop adding noise, so every frame is exact"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRecord/StreamRecorder.swift"
+find = "try? recorder.append(image, at: time)"
+replace = "try! recorder.append(image, at: time)"
+reason = "SourceRecorder: lose a whole recording to a frame after the cut"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Recording.swift"
+find = "Timestamp(nanoseconds: last.nanoseconds - first.nanoseconds)"
+replace = "last"
+reason = "Recording: report the last timestamp as the duration"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/RecordCommand.swift"
+find = "repeating: \"0\", count: max(0, Naming.digits - digits.count))"
+replace = "repeating: \"0\", count: 0)"
+reason = "RecordCommand: name frames so a directory sorts them 1, 10, 100"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEditor/HitTester.swift"
+find = "handleHit(at: point)"
+replace = "labelHit(at: point) ?? handleHit(at: point)"
+reason = "HitTester: let a label swallow the handle on its own edge"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEditor/EditorInteractor.swift"
+find = "public static let dragThreshold: Double = 3"
+replace = "public static let dragThreshold: Double = 0"
+reason = "EditorInteractor: treat every click as a drag"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEditor/EditorInteractor.swift"
+find = "width: abs(to.x - from.x),"
+replace = "width: to.x - from.x,"
+reason = "EditorInteractor: sweep backwards into a rectangle of negative size"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEditor/Document.swift"
+find = "AnnotationID((scene.annotations.map(\\.id.raw).max() ?? 0) + 1)"
+replace = "AnnotationID(UInt32(scene.annotations.count) + 1)"
+reason = "Document: hand out a number already in use after a deletion"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEditor/Document.swift"
+find = "future.removeAll()"
+replace = ""
+reason = "Document: let redo reinstate a change onto a scene it was never made to"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEditor/Document.swift"
+find = "scene.annotations.filter { $0.placement == nil }"
+replace = "scene.annotations"
+reason = "Document: overrule a placement somebody made by hand"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCapture/StreamFrameSource.swift"
+find = "status == .complete"
+replace = "true"
+reason = "StreamFrameSource: record the system's idle frames as new ones"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/AnnotateCommand.swift"
+find = "x: element.rect.minX / scale,"
+replace = "x: element.rect.minX * scale,"
+reason = "AnnotateCommand: scale retina findings the wrong way"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/DrawPath.swift"
+find = "min(max(0, radius), limit)"
+replace = "max(0, radius)"
+reason = "Path: let a corner radius turn the rectangle inside out"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/DrawList.swift"
+find = "pathBounds.raw.inset(by: -shadow.blur)"
+replace = "pathBounds.raw"
+reason = "DrawCommand: leave a shadow out of the area it dirties"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/Beautify.swift"
+find = "TransferFunction.encodedFromLinear(light)"
+replace = "light"
+reason = "Beautifier: blend in encoded values, so gradients band"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/Beautify.swift"
+find = "self.padding = max(0, padding)"
+replace = "self.padding = padding"
+reason = "BeautifyStyle: crop the screenshot to make room for a decoration"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/Beautify.swift"
+find = "offset: P2(x: 0, y: room * Proportion.shadowDrop),"
+replace = "offset: P2(x: 0, y: -room * Proportion.shadowDrop),"
+reason = "Beautifier: light the picture from the floor"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/Beautify.swift"
+find = "static let shadowBlur: Double = 0.5"
+replace = "static let shadowBlur: Double = 1.5"
+reason = "Beautifier: spill the shadow off the edge of the picture"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRedaction/SecretDetector.swift"
+find = "total += doubled > Luhn.largestDigit ? doubled - Luhn.largestDigit : doubled"
+replace = "total += doubled"
+reason = "SecretDetector: get the card checksum wrong, so real cards are missed"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRedaction/Redactor.swift"
+find = "true"
+replace = "false"
+reason = "MaskStyle: claim a solid block leaves something recoverable"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRedaction/Redactor.swift"
+find = "false"
+replace = "true"
+reason = "MaskStyle: promise a blur is irreversible"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRedaction/MaskSuggester.swift"
+find = "line.minX + Double(start) * perCharacter - bleed"
+replace = "line.minX - bleed"
+reason = "MaskSuggester: cover a whole line because part of it is a secret"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRedaction/MaskSuggester.swift"
+find = "y: line.minY - bleed,"
+replace = "y: line.minY,"
+reason = "MaskSuggester: leave a sliver of the text showing above the mask"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRedaction/SecretDetector.swift"
+find = "#\"\\b(?:AKIA|ASIA|AROA|AIDA|ANPA|ANVA|ABIA|ACCA)[A-Z0-9]{16}\\b\"#"
+replace = "#\"\\b(?:ZZZZ)[A-Z0-9]{16}\\b\"#"
+reason = "SecretDetector: miss the key shapes that are shorter than the length rule"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRedaction/SecretDetector.swift"
+find = "#\"\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b|\\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\b\"#"
+replace = "#\"\\b(?:\\d{1,3}\\.){3}\\d{1,3}|\\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\b\"#"
+reason = "SecretDetector: read a version number as a network address"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoExport/Exporter.swift"
+find = "Self.withoutTimestamps([UInt8](data as Data))"
+replace = "[UInt8](data as Data)"
+reason = "Exporter: stamp every page with the moment it was written"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoExport/Exporter.swift"
+find = "bytes[position] = Markers.filler"
+replace = "position = position"
+reason = "Exporter: leave the timestamp in place while pretending to blank it"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/DecisionTrace.swift"
+find = "badge: annotation.badge"
+replace = "badge: nil"
+reason = "LayoutSolution: drop a step's number while placing it"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = "annotation.badge == nil ? 0 : badgeAllowance(style: style)"
+replace = "0.0"
+reason = "LabelMetrics: size a numbered plate as though it had no number"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = "style.badgeDiameter + style.badgeGap"
+replace = "style.badgeDiameter"
+reason = "LabelMetrics: run the number into the words after it"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/BadgeGeometry.swift"
+find = "? plate.minX + inset"
+replace = "? plate.minX - style.badgeDiameter"
+reason = "BadgeGeometry: put the disc outside the plate"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/DrawListBuilder.swift"
+find = "x: baseline.x + LabelMetrics.badgeAllowance(style: style),"
+replace = "x: baseline.x,"
+reason = "DrawListBuilder: draw the words under the disc"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoHotkeys/HotkeyRegistry.swift"
+find = "UInt32(Self.virtualKeys[key] ?? kVK_ANSI_A)"
+replace = "UInt32(kVK_ANSI_A)"
+reason = "HotkeyRegistry: register every shortcut on the same key"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLibrary/Library.swift"
+find = "$0.takenAt == $1.takenAt ? $0.id.raw > $1.id.raw : $0.takenAt > $1.takenAt"
+replace = "$0.takenAt == $1.takenAt ? $0.id.raw > $1.id.raw : $0.takenAt < $1.takenAt"
+reason = "Library: put the oldest capture at the top"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoOverlay/Overlay.swift"
+find = "width: abs(to.x - from.x),"
+replace = "width: to.x - from.x,"
+reason = "Overlay: sweep backwards into a region of negative size"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoOverlay/Magnifier.swift"
+find = "pixels.append(inside ? frozen.image[x: x, y: y] : Self.nothing)"
+replace = "pixels.append(frozen.image[x: x, y: y])"
+reason = "Magnifier: smear the edge pixel where there is no screen"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoOverlay/Magnifier.swift"
+find = "self.across = wanted.isMultiple(of: Parity.even) ? wanted + 1 : wanted"
+replace = "self.across = wanted"
+reason = "Magnifier: leave the square without a middle"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Menu.swift"
+find = "items.append(contentsOf: captureItems(enabled: false))"
+replace = "items.append(contentsOf: captureItems(enabled: canSeeScreen))"
+reason = "Menu: offer a screenshot in the middle of a recording"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Menu.swift"
+find = "library.entries.prefix(Defaults.recentShown).map { entry in"
+replace = "library.entries.map { entry in"
+reason = "Menu: list every capture ever taken"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Menu.swift"
+find = "items.append(MenuItem(title: \"Quit Ekranbildo\", command: .quit, shortcut: nil, isEnabled: true))"
+replace = "items.append(MenuItem(title: \"Quit Ekranbildo\", command: .quit, shortcut: nil, isEnabled: canSeeScreen))"
+reason = "Menu: make quitting depend on seeing the screen"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Onboarding.swift"
+find = ".restart"
+replace = ".openSettings"
+reason = "OnboardingStep: send somebody to a checkbox that is already ticked"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Onboarding.swift"
+find = "hasCapturedAnything ? .done : .tryIt"
+replace = ".done"
+reason = "OnboardingStep: finish before anybody has captured anything"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Onboarding.swift"
+find = ".openSettings"
+replace = ".askForPermission"
+reason = "OnboardingStep: ask again when the system will not ask again"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoInspector/Preference.swift"
+find = "disagreements = wrong.sorted()"
+replace = "disagreements = wrong"
+reason = "PreferenceReport: report disagreements in whatever order they arrived"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoInspector/ComparisonPage.swift"
+find = "$0.score == $1.score ? $0.id.raw < $1.id.raw : $0.score < $1.score"
+replace = "$0.score < $1.score"
+reason = "QuerySelector: leave tied candidates in no particular order"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/Timeline.swift"
+find = "duration: .zero,"
+replace = "duration: .seconds(1),"
+reason = "Timeline: give a still picture a length"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "x: min(max(frame.minX, x), frame.maxX - viewWidth),"
+replace = "x: x,"
+reason = "CameraPathSolver: let the camera show the edge of the screen"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "min(1, max(1 / maximumZoom, needed))"
+replace = "min(1, needed)"
+reason = "CameraPathSolver: zoom in past the point where pixels run out"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "Timestamp.seconds(arrive.seconds + minimumRest)"
+replace = "arrive"
+reason = "CameraPathSolver: move again before anybody has seen where they were taken"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "distance / maximumSpeed"
+replace = "0"
+reason = "CameraPathSolver: pan faster than the eye can follow"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "Geo.overlaps(last.focus.raw, event.focus.raw)"
+replace = "true"
+reason = "CameraPathSolver: treat clicks in different places as one action"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "clamped * clamped * (3 - 2 * clamped)"
+replace = "clamped"
+reason = "CameraPath: start and stop the camera abruptly"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CursorPolish.swift"
+find = "pressed: sample.pressed"
+replace = "pressed: false"
+reason = "CursorPolish: lose a click while smoothing the path it is on"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CursorPolish.swift"
+find = "at: sample.at,"
+replace = "at: samples[0].at,"
+reason = "CursorPolish: move a sample in time as well as in place"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CursorPolish.swift"
+find = "still >= stillFor ? fadedOpacity : 1"
+replace = "1"
+reason = "CursorPolish: leave a parked cursor at full strength"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/DeadTime.swift"
+find = "Timestamp.seconds(window.from.seconds + breathingRoom)"
+replace = "window.from"
+reason = "DeadTimeRemover: cut into the moment something happened"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/VideoWriter.swift"
+find = "code: EncodeError.nothingToWrite,"
+replace = "code: EncodeError.writeFailed,"
+reason = "VideoWriter: report having nothing to write as the system giving up"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/VideoWriter.swift"
+find = "self.width = max(Defaults.smallest, width - width % Defaults.evenness)"
+replace = "self.width = width"
+reason = "EncodeSettings: hand the encoder a size it cannot halve"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/VideoWriter.swift"
+find = "max(minimumBitRate, width * height * bitsPerPixelPerSecond)"
+replace = "minimumBitRate"
+reason = "EncodeSettings: give a large picture what a small one gets"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/VideoWriter.swift"
+find = "try? FileManager.default.removeItem(at: url)"
+replace = "_ = url"
+reason = "VideoWriter: append to a file that is already there"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/RenderVideoCommand.swift"
+find = "input.timings.count == input.source.count"
+replace = "input.timings.count >= 0"
+reason = "RenderVideoCommand: place frames at moments belonging to other frames"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/RecordCommand.swift"
+find = "+ CanonicalText.rounded(frame.presentedAt.seconds, places: Precision.places)"
+replace = "+ CanonicalText.rounded(Double(index), places: Precision.places)"
+reason = "RecordCommand: write the frame's number where its moment belongs"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/ReadingDirection.swift"
+find = ".w"
+replace = ".e"
+reason = "ReadingDirection: put every label on the far side of what it describes"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/LayoutProblem.swift"
+find = "reading == .leftToRight ? a.minX < b.minX : a.minX > b.minX"
+replace = "a.minX < b.minX"
+reason = "LayoutProblem: read a right-to-left page left to right"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/BadgeGeometry.swift"
+find = ": plate.maxX - inset - style.badgeDiameter"
+replace = ": plate.minX + inset"
+reason = "BadgeGeometry: put the number where a right-to-left reader finishes"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/DrawListBuilder.swift"
+find = "baselineOrigin: annotation.badge == nil || reading == .rightToLeft"
+replace = "baselineOrigin: annotation.badge == nil"
+reason = "DrawListBuilder: draw right-to-left words under the number"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift"
+find = "static let fallbackFamily = \"Helvetica\""
+replace = "static let fallbackFamily = \"A Face Nobody Has Installed\""
+reason = "CoreGraphicsRenderer: fall back to a face that is not there either"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift"
+find = "family: CTFontCopyFamilyName(fallback) as String,"
+replace = "family: spec.family,"
+reason = "CoreGraphicsRenderer: report the face that was asked for, not the one used"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/Icons.swift"
+find = "x: point.x - hotSpot.x * size,"
+replace = "x: point.x - size,"
+reason = "Icon: point from the corner of the box instead of from the glyph's own tip"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/Icons.swift"
+find = "P2(x: Unit.pointerTipX, y: Unit.pointerTipY)"
+replace = "P2(x: Unit.middle, y: Unit.middle)"
+reason = "Icon: treat the pointer as if it pointed from its middle"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/DrawListBuilder.swift"
+find = "commands.append(.fill(outline, faded(style.cursorColor)))"
+replace = "commands.insert(.fill(outline, faded(style.cursorColor)), at: 0)"
+reason = "DrawListBuilder: hide the pointer's halo under its own body"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/DrawListBuilder.swift"
+find = "alpha: style.rippleColor.alpha * (1 - ripple)"
+replace = "alpha: style.rippleColor.alpha"
+reason = "DrawListBuilder: let a click's ring grow without ever fading"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CursorTrack.swift"
+find = "after.at.nanoseconds - before.at.nanoseconds"
+replace = "Int64(after.at.seconds - before.at.seconds)"
+reason = "CursorTrack: work out where the pointer is in seconds rather than in nanoseconds"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CursorTrack.swift"
+find = "position: geometry.scenePoint(of: $0.position),"
+replace = "position: ScenePoint(x: $0.position.x, y: $0.position.y),"
+reason = "CursorTrack: leave the pointer in the screen's coordinates"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/Timeline.swift"
+find = "cursor: cursor?.cursor(at: inside)"
+replace = "cursor: cursor?.cursor(at: .zero)"
+reason = "Timeline: leave the pointer where it started for the whole recording"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRenderCoreGraphics/CoreGraphicsRenderer.swift"
+find = "at: Double(image.width) / max(Scale.smallestCanvas, list.canvas.width),"
+replace = "at: 1,"
+reason = "CoreGraphicsRenderer: draw over a Retina frame at half the size"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRenderCoreGraphics/ContextSeeding.swift"
+find = "bytes[offset + PixelFormat.Offset.blue] = premultiplied(pixel.blue)"
+replace = "bytes[offset + PixelFormat.Offset.blue] = premultiplied(pixel.red)"
+reason = "ContextSeeding: swap a frame's red and blue on the way into the context"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRenderCoreGraphics/ContextSeeding.swift"
+find = "UInt8((Int(value) * alpha + Rounding.half) / PixelFormat.maximumChannelValue)"
+replace = "value"
+reason = "ContextSeeding: hand the context colour that was never multiplied by its alpha"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Recording.swift"
+find = "max(cursor.last?.at ?? first, events.last?.at ?? first)"
+replace = "first"
+reason = "Recording: measure a recording by its frames alone"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/StyleTokens.swift"
+find = "try container.decodeIfPresent(T.self, forKey: key) ?? fallback"
+replace = "try container.decode(T.self, forKey: key)"
+reason = "StyleTokens: refuse every document written before the newest token existed"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Paint.swift"
+find = "alpha: try container.decodeIfPresent(Double.self, forKey: .alpha) ?? Self.opaqueAlpha"
+replace = "alpha: try container.decode(Double.self, forKey: .alpha)"
+reason = "Color: refuse a colour that says nothing about transparency"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoFixtures/PseudoLocalisation.swift"
+find = "text.count + Padding.shortest,"
+replace = "text.count,"
+reason = "PseudoLocalisation: leave short labels the length they already were"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoFixtures/PseudoLocalisation.swift"
+find = "accented.append(Self.lookalikes[character] ?? character)"
+replace = "accented.append(character)"
+reason = "PseudoLocalisation: translate into English"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoFixtures/PseudoLocalisation.swift"
+find = "\"[\\(accented)\\(padding)]\""
+replace = "\"\\(accented)\\(padding)\""
+reason = "PseudoLocalisation: hide where a label was cut short"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/Quantiser.swift"
+find = "weight(box) * spread(box)"
+replace = "spread(box)"
+reason = "Quantiser: spend colours on ranges nothing in the picture occupies"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/Quantiser.swift"
+find = "red += Int(entry.color.red) * entry.count"
+replace = "red += Int(entry.color.red)"
+reason = "Quantiser: average a box as if every colour in it were equally common"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/Quantiser.swift"
+find = "red: UInt8((red + half) / total),"
+replace = "red: UInt8(red / total),"
+reason = "Quantiser: darken every palette entry by half a count"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/Quantiser.swift"
+find = "max(1, min(sorted.count - 1, sorted.count / Split.halves))"
+replace = "1"
+reason = "Quantiser: shave one colour off a box instead of halving it"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/GIFWriter.swift"
+find = "[UInt8(value & Byte.mask), UInt8((value >> Byte.bits) & Byte.mask)]"
+replace = "[UInt8((value >> Byte.bits) & Byte.mask), UInt8(value & Byte.mask)]"
+reason = "GIFWriter: write every number in a GIF back to front"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/GIFWriter.swift"
+find = "Int((showFor.seconds * Double(Timing.hundredthsPerSecond)).rounded())"
+replace = "Timing.shortest"
+reason = "GIFWriter: show every frame for as long as the shortest one"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/GIFWriter.swift"
+find = "UInt8(Flags.globalTable | (indexBits(tableSize) - 1))"
+replace = "UInt8(Flags.globalTable)"
+reason = "GIFWriter: claim a colour table of two whatever its size"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/LZW.swift"
+find = "output.append(clear, bits: width)"
+replace = "output.append(end, bits: width)"
+reason = "LZW: end the picture where the table should have been cleared"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "ordered(solved.filter { !taken.contains($0.at) } + pinned)"
+replace = "ordered(solved + pinned)"
+reason = "CameraPathSolver: keep the solver's own answer beside the one somebody pinned"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "byMoment[existing] = (at, override.view)"
+replace = "byMoment.append((at, override.view))"
+reason = "CameraPathSolver: pin two views to one moment"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/CameraPath.swift"
+find = "Timeline.clamped(override.at, to: duration)"
+replace = "override.at"
+reason = "CameraPathSolver: pin a view past the end of the recording"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/CameraCommand.swift"
+find = "try container.decodeIfPresent([CameraOverride].self, forKey: .overrides) ?? []"
+replace = "[]"
+reason = "CameraCommand: ignore everything somebody pinned"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/TimelineInteractor.swift"
+find = "Outcome(state: state.with(playhead: Timeline.clamped(moment, to: state.duration)))"
+replace = "Outcome(state: state.with(playhead: moment))"
+reason = "TimelineInteractor: let the playhead run off the end of the recording"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/TimelineInteractor.swift"
+find = "Outcome(state: state.with(playhead: found.at, selected: .some(found.at)))"
+replace = "Outcome(state: state.with(selected: .some(found.at)))"
+reason = "TimelineInteractor: select a keyframe without going to look at it"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/TimelineInteractor.swift"
+find = "state.overrides.filter { $0.at != selected }"
+replace = "state.overrides"
+reason = "TimelineInteractor: leave a copy behind when a keyframe is dragged"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/TimelineInteractor.swift"
+find = "(overrides.filter { $0.at != moment } + [CameraOverride(at: moment, view: view)])"
+replace = "(overrides + [CameraOverride(at: moment, view: view)])"
+reason = "TimelineInteractor: pin a second camera to a moment that already has one"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTimeline/TimelineInteractor.swift"
+find = ".sorted { $0.at < $1.at }"
+replace = ".sorted { $0.view.minX < $1.view.minX }"
+reason = "TimelineInteractor: order keyframes by where the camera looks rather than when"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/VideoWriter.swift"
+find = "frame = try next()"
+replace = "frame = nil"
+reason = "VideoWriter: write only the first frame of every video"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoEncode/VideoWriter.swift"
+find = "duration: last,"
+replace = "duration: first.at,"
+reason = "VideoWriter: report every video as lasting until its first frame"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Synthesis.swift"
+find = "Alphabet.like(character)"
+replace = "Alphabet.letters"
+reason = "Synthesis: stand in for a full-width word with one half its width"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Synthesis.swift"
+find = "result.append(\" \")"
+replace = "continue"
+reason = "Synthesis: drop the spaces a label's lines break at"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Synthesis.swift"
+find = "result.append(alphabet[Int(generator.next() % UInt64(alphabet.count))])"
+replace = "result.append(character)"
+reason = "Synthesis: leave somebody's words in the bundle they are sending"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Synthesis.swift"
+find = "background: scene.background.map(synthesised),"
+replace = "background: scene.background,"
+reason = "Synthesis: leave somebody's screenshot in the bundle they are sending"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Synthesis.swift"
+find = "hash ^= UInt64(byte)"
+replace = "hash ^= 0"
+reason = "Synthesis: give every label in a scene the same stand-in"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Synthesis.swift"
+find = "pixelWidth: image.pixelWidth,"
+replace = "pixelWidth: 1,"
+reason = "Synthesis: forget the size the layout was solved against"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoInspector/Counterfactual.swift"
+find = "max(first, second) * Widening.margin"
+replace = "max(first, second)"
+reason = "Counterfactual: report a tolerance that leaves the group still deciding"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTestKit/GoldenStore.swift"
+find = ".incomparable(recorded: moved, now: version.canonicalText)"
+replace = ".matched"
+reason = "GoldenStore: pass a test whose golden could not be compared"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Contrast.swift"
+find = ": pow((channel + Luminance.offset) / (1 + Luminance.offset), Luminance.gamma)"
+replace = ": channel"
+reason = "Color: measure brightness without the curve the eye actually has"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Contrast.swift"
+find = "channel <= Luminance.kink"
+replace = "channel <= 0"
+reason = "Color: use the power law where the published curve is a straight line"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Contrast.swift"
+find = "(lighter + Contrast.offset) / (darker + Contrast.offset)"
+replace = "lighter / darker"
+reason = "Color: divide by nothing when both colours are black"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Contrast.swift"
+find = "green: mix(green, background.green),"
+replace = "green: background.green,"
+reason = "Color: lose a channel when compositing over something"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/StyleTokens.swift"
+find = "labelContrast >= Readability.required && badgeContrast >= Readability.required"
+replace = "labelContrast >= Readability.required"
+reason = "StyleTokens: call a style readable when its step numbers are not"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/ColorVision.swift"
+find = "static func atLeastNothing(_ response: Double) -> Double { max(0, response) }"
+replace = "static func atLeastNothing(_ response: Double) -> Double { response }"
+reason = "ColorVision: let a cone respond less than not at all"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/ColorVision.swift"
+find = "long: 17.882_4 * linear.red + 43.516_1 * linear.green + 4.119_35 * linear.blue,"
+replace = "long: 0.313_9 * linear.red + 0.639_5 * linear.green + 0.046_6 * linear.blue,"
+reason = "ColorVision: normalise the matrix the substitutions were fitted against"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/ColorVision.swift"
+find = "red: Transfer.toLinear(red),"
+replace = "red: red,"
+reason = "ColorVision: give the cones the stored numbers rather than the light"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/StyleTokens.swift"
+find = "labelColor.seen(with: vision)"
+replace = "labelColor"
+reason = "StyleTokens: ask how readable a style is and forget who is looking"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/UnknownKeys.swift"
+find = "self.entries = entries.sorted { $0.key < $1.key }"
+replace = "self.entries = entries"
+reason = "UnknownKeys: save a document in a different order each time"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = "try unknownKeys.write(to: encoder)"
+replace = "_ = unknownKeys"
+reason = "Scene: lose a later version's work when an older one saves"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/Bisection.swift"
+find = "outcome: .found(version: versions[differing], previous: versions[agreeing]),"
+replace = "outcome: .found(version: versions[agreeing], previous: versions[differing]),"
+reason = "Bisection: blame the build before the one that changed"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/ReplayBundle.swift"
+find = ".changed(changes.sorted { $0.annotation.raw < $1.annotation.raw })"
+replace = ".changed(changes)"
+reason = "ReplayBundle: report changes in whatever order they were found"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoContracts/Fingerprint.swift"
+find = "hash ^= UInt32(byte)"
+replace = "hash |= UInt32(byte)"
+reason = "Fingerprint: fold bytes together so different inputs collide"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/CalibrationVersion.swift"
+find = "bytes.append(Separator.betweenConstants)"
+replace = "bytes.append(contentsOf: [] as [UInt8])"
+reason = "CalibrationVersion: run constants together with no separator"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoLayout/LayoutVersion.swift"
+find = "[CalibrationConstant(name: \"term\", value: Double(term.name.count))]"
+replace = "[CalibrationConstant]()"
+reason = "LayoutVersion: leave the term name out of the version"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoRender/RenderVersion.swift"
+find = "\"draw-\" + Fingerprint.of(DrawListBuilder(measurer: FixedMetrics()).build(scene).canonicalText)"
+replace = "\"draw-\" + Fingerprint.of(\"\")"
+reason = "RenderVersion: name a renderer without looking at what it draws"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Scene.swift"
+find = "unknownKeys: unknownKeys"
+replace = "unknownKeys: .nothing"
+reason = "Scene: lose what an edit did not understand"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCore/Synthesis.swift"
+find = "unknownKeys: .nothing"
+replace = "unknownKeys: scene.unknownKeys"
+reason = "Synthesis: put keys nobody could read into a bug report"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTestHooks/HookChannel.swift"
+find = "\"\\(head) \\(payload.utf8.count)\\(Format.newline)\\(payload)\""
+replace = "\"\\(head) \\(payload.count)\\(Format.newline)\\(payload)\""
+reason = "HookChannel: count characters where the format counts bytes"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoTestHooks/HookChannel.swift"
+find = ".ok(try handler.handle(request.payload))"
+replace = ".failed(try handler.handle(request.payload))"
+reason = "HookChannel: report every command as having failed"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/Ticks.swift"
+find = "public var next: Ticks { current }"
+replace = "public var next: Ticks { current.advanced(by: step) }"
+reason = "Ticks: report the time after next as the time now"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceValue.swift"
+find = ".borrowed(replacing(text))"
+replace = ".borrowed(text)"
+reason = "TraceValue: send somebody's own words in a bundle said to have none"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceValue.swift"
+find = "self"
+replace = ".string(\"\")"
+reason = "TraceValue: empty a bundle of the reason codes it was sent to explain"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceValue.swift"
+find = ".list(values.map { $0.synthesised(replacing) })"
+replace = ".list(values)"
+reason = "TraceValue: leave borrowed words inside a list untouched"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoCLI/AnnotateCommand.swift"
+find = "(\"label\", .borrowed(mark.label)),"
+replace = "(\"label\", .string(mark.label)),"
+reason = "AnnotateCommand: put the words somebody typed in as the program's own"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceSynthesis.swift"
+find = "output += text[index...]"
+replace = "output += \"\""
+reason = "TraceSynthesis: drop the tail of a truncated trace"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceLog.swift"
+find = "signposts.ended(span.name)"
+replace = "signposts.began(span.name)"
+reason = "Signposts: end every interval by starting another one"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoObservability/TraceLog.swift"
+find = "signposts.happened(name)"
+replace = "signposts.began(name)"
+reason = "Signposts: turn every event into an interval that never closes"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoSignposts/SystemSignposts.swift"
+find = "? SystemSignposts() : NoSignposts()"
+replace = "? NoSignposts() : SystemSignposts()"
+reason = "Signposting: talk to the system unless somebody asked for it"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Settings.swift"
+find = "settings.captureShortcut = Defaults.captureShortcut"
+replace = "settings.captureShortcut = settings.captureShortcut"
+reason = "Settings: keep a shortcut the system would refuse"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Settings.swift"
+find = "try settings.unknownKeys.write(to: encoder)"
+replace = "_ = settings.unknownKeys"
+reason = "Settings: lose a choice a later version wrote"
+
+[[mutation.custom]]
+file = "Sources/EkranbildoShell/Settings.swift"
+find = "public static let sendsDiagnostics = false"
+replace = "public static let sendsDiagnostics = true"
+reason = "Settings: send a picture of somebody's screen by default"

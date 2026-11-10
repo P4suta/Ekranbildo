@@ -1,0 +1,7 @@
+version = 1
+
+[policy]
+mode = "all"
+layout = "compact"
+keep_kind = ["directive"]
+keep_regex = ["^// *determinism:allow"]

@@ -1,0 +1,36 @@
+{
+  "canvas": {
+    "raw": {
+      "origin": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "width": 400,
+        "height": 260
+      }
+    }
+  },
+  "background": null,
+  "annotations": [
+    {
+      "id": {
+        "raw": 1
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 170,
+            "y": 110
+          },
+          "size": {
+            "width": 60,
+            "height": 30
+          }
+        }
+      },
+      "label": "Open",
+      "placement": null
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "canvas": { "raw": { "origin": { "x": 0, "y": 0 }, "size": { "width": 480, "height": 300 } } },
+  "background": null,
+  "annotations": [
+    {
+      "id": { "raw": 1 },
+      "target": { "raw": { "origin": { "x": 60, "y": 40 }, "size": { "width": 120, "height": 28 } } },
+      "label": "Search field",
+      "placement": { "direction": 14, "leaderLength": 64 }
+    },
+    {
+      "id": { "raw": 2 },
+      "target": { "raw": { "origin": { "x": 330, "y": 210 }, "size": { "width": 90, "height": 32 } } },
+      "label": "保存",
+      "placement": { "direction": 6, "leaderLength": 72 }
+    },
+    {
+      "id": { "raw": 3 },
+      "target": { "raw": { "origin": { "x": 210, "y": 140 }, "size": { "width": 44, "height": 44 } } },
+      "label": "Toggle",
+      "placement": { "direction": 0, "leaderLength": 58 }
+    }
+  ]
+}
