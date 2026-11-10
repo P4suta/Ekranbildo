@@ -1,0 +1,74 @@
+{
+  "canvas": {
+    "raw": {
+      "origin": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "width": 520,
+        "height": 340
+      }
+    }
+  },
+  "background": null,
+  "annotations": [
+    {
+      "id": {
+        "raw": 1
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 40,
+            "y": 40
+          },
+          "size": {
+            "width": 200,
+            "height": 24
+          }
+        }
+      },
+      "label": "Wide and short",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 2
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 300,
+            "y": 120
+          },
+          "size": {
+            "width": 24,
+            "height": 140
+          }
+        }
+      },
+      "label": "Tall and narrow",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 3
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 120,
+            "y": 240
+          },
+          "size": {
+            "width": 60,
+            "height": 60
+          }
+        }
+      },
+      "label": "Square",
+      "placement": null
+    }
+  ]
+}

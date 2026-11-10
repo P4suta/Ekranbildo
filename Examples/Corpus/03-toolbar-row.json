@@ -1,0 +1,93 @@
+{
+  "canvas": {
+    "raw": {
+      "origin": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "width": 560,
+        "height": 200
+      }
+    }
+  },
+  "background": null,
+  "annotations": [
+    {
+      "id": {
+        "raw": 1
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 40,
+            "y": 40
+          },
+          "size": {
+            "width": 48,
+            "height": 32
+          }
+        }
+      },
+      "label": "Back",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 2
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 100,
+            "y": 40
+          },
+          "size": {
+            "width": 48,
+            "height": 32
+          }
+        }
+      },
+      "label": "Forward",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 3
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 160,
+            "y": 40
+          },
+          "size": {
+            "width": 48,
+            "height": 32
+          }
+        }
+      },
+      "label": "Reload",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 4
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 220,
+            "y": 40
+          },
+          "size": {
+            "width": 48,
+            "height": 32
+          }
+        }
+      },
+      "label": "Home",
+      "placement": null
+    }
+  ]
+}

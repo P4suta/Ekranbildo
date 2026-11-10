@@ -1,0 +1,9 @@
+{
+  "canvas": {"raw": {"origin": {"x": 0, "y": 0}, "size": {"width": 480, "height": 320}}},
+  "annotations": [
+    {"id": {"raw": 1},
+     "target": {"raw": {"origin": {"x": 60, "y": 40}, "size": {"width": 120, "height": 28}}},
+     "label": "Search field",
+     "placement": {"direction": 14, "leaderLength": 64}}
+  ]
+}

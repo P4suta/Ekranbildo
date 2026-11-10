@@ -1,0 +1,104 @@
+
+included:
+  - Sources
+  - Tests
+
+excluded:
+  - .build
+  - Scripts
+
+strict: true
+
+disabled_rules:
+  - opening_brace
+  - statement_position
+  - trailing_comma
+  - vertical_parameter_alignment
+  - switch_case_alignment
+  - attributes
+  - function_body_length
+
+opt_in_rules:
+  - array_init
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
+  - discouraged_none_name
+  - discouraged_object_literal
+  - empty_collection_literal
+  - empty_count
+  - empty_string
+  - enum_case_associated_values_count
+  - explicit_init
+  - fallthrough
+  - fatal_error_message
+  - first_where
+  - flatmap_over_map_reduce
+  - identical_operands
+  - implicitly_unwrapped_optional
+  - joined_default_parameter
+  - last_where
+  - legacy_multiple
+  - literal_expression_end_indentation
+  - lower_acl_than_parent
+  - modifier_order
+  - multiline_arguments
+  - multiline_literal_brackets
+  - multiline_parameters
+  - operator_usage_whitespace
+  - overridden_super_call
+  - prefer_self_in_static_references
+  - prefer_self_type_over_type_of_self
+  - prefer_zero_over_explicit_init
+  - private_action
+  - private_outlet
+  - prohibited_super_call
+  - reduce_into
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - return_value_from_void_function
+  - shorthand_optional_binding
+  - single_test_class
+  - sorted_first_last
+  - static_operator
+  - toggle_bool
+  - unavailable_function
+  - unneeded_parentheses_in_closure_argument
+  - unowned_variable_capture
+  - untyped_error_in_catch
+  - vertical_whitespace_closing_braces
+  - yoda_condition
+
+line_length:
+  warning: 110
+  error: 140
+  ignores_urls: true
+  ignores_comments: false
+
+identifier_name:
+  min_length:
+    warning: 1
+    error: 1
+  excluded: [a, b, c, x, y, t, id]
+
+type_name:
+  min_length: 2
+
+nesting:
+  type_level: 2
+
+custom_rules:
+  no_print:
+    name: "No print()"
+    regex: '(?<![\w.])print\('
+    message: "Use the structured logger in EkranbildoObservability instead of print()."
+    severity: error
+    match_kinds: [identifier]
+    excluded: ".*/ekranbildo-cli/.*"
+
+cyclomatic_complexity:
+  ignores_case_statements: true

@@ -1,0 +1,74 @@
+{
+  "canvas": {
+    "raw": {
+      "origin": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "width": 480,
+        "height": 300
+      }
+    }
+  },
+  "background": null,
+  "annotations": [
+    {
+      "id": {
+        "raw": 1
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 90,
+            "y": 70
+          },
+          "size": {
+            "width": 70,
+            "height": 30
+          }
+        }
+      },
+      "label": "保存する",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 2
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 300,
+            "y": 190
+          },
+          "size": {
+            "width": 70,
+            "height": 30
+          }
+        }
+      },
+      "label": "キャンセル",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 3
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 200,
+            "y": 120
+          },
+          "size": {
+            "width": 40,
+            "height": 40
+          }
+        }
+      },
+      "label": "設定",
+      "placement": null
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300" viewBox="0 0 480 300">
+<image href="assets/sample-screenshot.png" x="0" y="0" width="480" height="300" opacity="1"/>
+<path d="M 183.497 117.497 L 138.243 72.243" fill="none" stroke="#c22424" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"/>
+<path d="M 138.243 72.243 L 143.192 84.263 L 150.263 77.192 Z" fill="#c22424" stroke="none"/>
+<path d="M 150.497 117.497 L 242.497 117.497 C 245.811 117.497 248.497 120.184 248.497 123.497 L 248.497 137.497 C 248.497 140.811 245.811 143.497 242.497 143.497 L 150.497 143.497 C 147.184 143.497 144.497 140.811 144.497 137.497 L 144.497 123.497 C 144.497 120.184 147.184 117.497 150.497 117.497 Z" fill="#c22424" stroke="none"/>
+<text x="154.497" y="134.697" font-family="Inter" font-size="14" font-weight="600" fill="#ffffff">Search field</text>
+<path d="M 303.846 154.846 L 354.757 205.757" fill="none" stroke="#c22424" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"/>
+<path d="M 354.757 205.757 L 349.808 193.737 L 342.737 200.808 Z" fill="#c22424" stroke="none"/>
+<path d="M 272.846 128.846 L 308.846 128.846 C 312.159 128.846 314.846 131.532 314.846 134.846 L 314.846 148.846 C 314.846 152.159 312.159 154.846 308.846 154.846 L 272.846 154.846 C 269.532 154.846 266.846 152.159 266.846 148.846 L 266.846 134.846 C 266.846 131.532 269.532 128.846 272.846 128.846 Z" fill="#c22424" stroke="none"/>
+<text x="276.846" y="146.046" font-family="Inter" font-size="14" font-weight="600" fill="#ffffff">保存</text>
+<path d="M 318 162 L 260 162" fill="none" stroke="#c22424" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"/>
+<path d="M 260 162 L 272 167 L 272 157 Z" fill="#c22424" stroke="none"/>
+<path d="M 324 149 L 374 149 C 377.314 149 380 151.686 380 155 L 380 169 C 380 172.314 377.314 175 374 175 L 324 175 C 320.686 175 318 172.314 318 169 L 318 155 C 318 151.686 320.686 149 324 149 Z" fill="#c22424" stroke="none"/>
+<text x="328" y="166.2" font-family="Inter" font-size="14" font-weight="600" fill="#ffffff">Toggle</text>
+</svg>

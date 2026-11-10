@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ekranbildo layout inspector</title>
+<style>:root { color-scheme: light dark; }
+body { font: 13px/1.5 ui-sans-serif, system-ui, sans-serif; margin: 24px; max-width: 1100px; }
+h1 { font-size: 20px; }
+h2 { font-size: 15px; margin-top: 28px; border-bottom: 1px solid #8884; padding-bottom: 4px; }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 2px 8px; text-align: right; border-bottom: 1px solid #8882; }
+th:first-child, td:first-child, .kv th { text-align: left; }
+.kv th { font-weight: 600; width: 180px; }
+.candidates { font-size: 12px; }
+.winner { background: #2ecc7130; font-weight: 600; }
+.reason { font-size: 13px; color: #666; }
+.override { font-size: 13px; color: #b9770e; }
+.panels { display: flex; flex-wrap: wrap; gap: 12px; }
+figure { margin: 0; }
+figcaption { font-size: 11px; color: #666; margin-bottom: 2px; }
+.heat { width: 200px; height: auto; image-rendering: pixelated; border: 1px solid #8884; }
+.empty { font-size: 2px; fill: #999; }
+svg { max-width: 100%; height: auto; }</style>
+</head>
+<body>
+<h1>Layout inspector</h1>
+<section><h2>Summary</h2><table class="kv">
+<tr><th>annotations</th><td>2</td></tr>
+<tr><th>placed</th><td>2</td></tr>
+<tr><th>unplaced</th><td>0</td></tr>
+<tr><th>relaxation rung</th><td>0</td></tr>
+<tr><th>relaxed</th><td>nothing</td></tr>
+<tr><th>candidatesGenerated</th><td>160</td></tr>
+<tr><th>unaryEvaluations</th><td>648</td></tr>
+<tr><th>pairEvaluations</th><td>1728</td></tr>
+<tr><th>searchNodes</th><td>7</td></tr>
+<tr><th>prunedBranches</th><td>125</td></tr>
+</table></section>
+<section><h2>Result</h2><svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+<path d="M 204.672 56.928 L 145.543 81.42" fill="none" stroke="#c22424" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"/>
+<path d="M 145.543 81.42 L 158.543 81.447 L 154.716 72.208 Z" fill="#c22424" stroke="none"/>
+<path d="M 190.056 30.928 L 282.056 30.928 C 285.37 30.928 288.056 33.614 288.056 36.928 L 288.056 50.928 C 288.056 54.242 285.37 56.928 282.056 56.928 L 190.056 56.928 C 186.743 56.928 184.056 54.242 184.056 50.928 L 184.056 36.928 C 184.056 33.614 186.743 30.928 190.056 30.928 Z" fill="#c22424" stroke="none"/>
+<text x="194.056" y="48.128" font-family="Inter" font-size="14" font-weight="600" fill="#ffffff">Search field</text>
+<path d="M 394.497 150.503 L 349.243 195.757" fill="none" stroke="#c22424" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"/>
+<path d="M 349.243 195.757 L 361.263 190.808 L 354.192 183.737 Z" fill="#c22424" stroke="none"/>
+<path d="M 389.497 124.503 L 425.497 124.503 C 428.811 124.503 431.497 127.189 431.497 130.503 L 431.497 144.503 C 431.497 147.816 428.811 150.503 425.497 150.503 L 389.497 150.503 C 386.184 150.503 383.497 147.816 383.497 144.503 L 383.497 130.503 C 383.497 127.189 386.184 124.503 389.497 124.503 Z" fill="#c22424" stroke="none"/>
+<text x="393.497" y="141.703" font-family="Inter" font-size="14" font-weight="600" fill="#ffffff">保存</text>
+</svg></section>
+<section><h2>Cost field</h2>
+<div class="panels"><figure>
+<figcaption>composite</figcaption>
+<svg viewBox="0 0 60 40" class="heat">
+<rect x="0" y="0" width="60" height="40" fill="#f4f4f5"/>
+<rect x="12" y="10" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="13" y="10" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="14" y="10" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="15" y="10" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="16" y="10" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="17" y="10" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="12" y="11" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="13" y="11" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="14" y="11" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="15" y="11" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="16" y="11" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="17" y="11" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="12" y="12" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="13" y="12" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="14" y="12" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="15" y="12" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="16" y="12" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="17" y="12" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="37" y="25" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="38" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="39" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="40" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="41" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="42" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="43" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="44" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="37" y="26" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="38" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="39" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="40" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="41" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="42" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="43" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="44" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="37" y="27" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="38" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="39" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="40" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="41" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="42" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="43" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="44" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="37" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.375"/><rect x="38" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="39" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="40" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="41" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="42" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="43" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="44" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/>
+</svg>
+</figure>
+<figure>
+<figcaption>elements</figcaption>
+<svg viewBox="0 0 60 40" class="heat">
+<rect x="0" y="0" width="60" height="40" fill="#f4f4f5"/>
+<rect x="12" y="10" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="13" y="10" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="14" y="10" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="15" y="10" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="16" y="10" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="17" y="10" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="12" y="11" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="13" y="11" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="14" y="11" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="15" y="11" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="16" y="11" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="17" y="11" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="12" y="12" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="13" y="12" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="14" y="12" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="15" y="12" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="16" y="12" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="17" y="12" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="37" y="25" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="38" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="39" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="40" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="41" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="42" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="43" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="44" y="25" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="37" y="26" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="38" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="39" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="40" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="41" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="42" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="43" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="44" y="26" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="37" y="27" width="1" height="1" fill="#c0392b" fill-opacity="0.5"/><rect x="38" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="39" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="40" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="41" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="42" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="43" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="44" y="27" width="1" height="1" fill="#c0392b" fill-opacity="1"/><rect x="37" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.375"/><rect x="38" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="39" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="40" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="41" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="42" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="43" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/><rect x="44" y="28" width="1" height="1" fill="#c0392b" fill-opacity="0.75"/>
+</svg>
+</figure>
+<figure>
+<figcaption>textInk</figcaption>
+<svg viewBox="0 0 60 40" class="heat">
+<rect x="0" y="0" width="60" height="40" fill="#f4f4f5"/>
+<text x="1" y="3" class="empty">empty</text>
+</svg>
+</figure>
+<figure>
+<figcaption>edgeEnergy</figcaption>
+<svg viewBox="0 0 60 40" class="heat">
+<rect x="0" y="0" width="60" height="40" fill="#f4f4f5"/>
+<text x="1" y="3" class="empty">empty</text>
+</svg>
+</figure>
+<figure>
+<figcaption>saliency</figcaption>
+<svg viewBox="0 0 60 40" class="heat">
+<rect x="0" y="0" width="60" height="40" fill="#f4f4f5"/>
+<text x="1" y="3" class="empty">empty</text>
+</svg>
+</figure>
+<figure>
+<figcaption>borderMargin</figcaption>
+<svg viewBox="0 0 60 40" class="heat">
+<rect x="0" y="0" width="60" height="40" fill="#f4f4f5"/>
+<text x="1" y="3" class="empty">empty</text>
+</svg>
+</figure>
+<figure>
+<figcaption>placedAnnotations</figcaption>
+<svg viewBox="0 0 60 40" class="heat">
+<rect x="0" y="0" width="60" height="40" fill="#f4f4f5"/>
+<text x="1" y="3" class="empty">empty</text>
+</svg>
+</figure></div>
+</section>
+<section>
+<h2>Search field</h2>
+<p class="reason">decided by identifier: every group was too close to call, margin 0.008
+&mdash; 24 candidates survived the constraints</p>
+
+<table class="candidates">
+<tr><th>#</th><th>direction</th><th>length</th><th>readability</th><th>targetClarity</th><th>clearance</th><th>consistency</th><th>aesthetics</th><th>canvasEdgeProximity</th><th>targetAmbiguity</th><th>labelClearance</th><th>leaderClearance</th><th>axisAlignment</th><th>leaderLength</th></tr>
+<tr class="winner">
+<td>0 ★</td>
+<td>ene</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.008</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.016</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>1</td>
+<td>ssw</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>2</td>
+<td>sse</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>3</td>
+<td>se</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.010</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.020</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>4</td>
+<td>ese</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.008</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.016</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>5</td>
+<td>ene</td>
+<td>44.000</td>
+<td>0.000</td><td>0.000</td><td>0.011</td><td>0.000</td><td>0.167</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.023</td><td>0.000</td><td>0.333</td></tr>
+</table>
+</section>
+<section>
+<h2>保存</h2>
+<p class="reason">decided by identifier: every group was too close to call, margin 0.013
+&mdash; 24 candidates survived the constraints</p>
+
+<table class="candidates">
+<tr><th>#</th><th>direction</th><th>length</th><th>readability</th><th>targetClarity</th><th>clearance</th><th>consistency</th><th>aesthetics</th><th>canvasEdgeProximity</th><th>targetAmbiguity</th><th>labelClearance</th><th>leaderClearance</th><th>axisAlignment</th><th>leaderLength</th></tr>
+<tr class="winner">
+<td>0 ★</td>
+<td>ne</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.013</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.026</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>1</td>
+<td>nne</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>2</td>
+<td>nnw</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>3</td>
+<td>nw</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.013</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.026</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>4</td>
+<td>wnw</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.008</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.016</td><td>0.000</td><td>0.000</td></tr>
+<tr class="">
+<td>5</td>
+<td>wsw</td>
+<td>64.000</td>
+<td>0.000</td><td>0.000</td><td>0.006</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.012</td><td>0.000</td><td>0.000</td></tr>
+</table>
+</section>
+</body>
+</html>

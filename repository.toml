@@ -1,0 +1,15 @@
+name = "Ekranbildo"
+summary = "Capture and edit macOS screenshots with automatic annotation placement"
+install = """
+git clone https://github.com/P4suta/Ekranbildo.git
+cd Ekranbildo
+mise install
+"""
+usage_language = "sh"
+usage = "swift run --package-path Tools ekranbildo-dev check"
+copyright = "2026 Yasunobu Sakashita"
+license = "MIT OR Apache-2.0"
+
+[[consent]]
+contributor = "Yasunobu"
+evidence = "The recovered README.md grants MIT OR Apache-2.0, and LICENSE-MIT names Yasunobu Sakashita."

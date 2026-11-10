@@ -1,0 +1,11 @@
+{
+  "canvas": {"raw": {"origin": {"x": 0, "y": 0}, "size": {"width": 480, "height": 320}}},
+  "annotations": [
+    {"id": {"raw": 1},
+     "target": {"raw": {"origin": {"x": 60, "y": 40}, "size": {"width": 120, "height": 28}}},
+     "label": "First", "placement": null, "badge": 1},
+    {"id": {"raw": 2},
+     "target": {"raw": {"origin": {"x": 260, "y": 180}, "size": {"width": 90, "height": 28}}},
+     "label": "Second", "placement": null, "badge": 2}
+  ]
+}

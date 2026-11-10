@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    An Instruments package for the stages Ekranbildo emits signposts for.
+
+    Committed as its source rather than as a built .tracetemplate. A template is
+    a binary Instruments writes, so a committed one cannot be reviewed, cannot
+    be diffed, and cannot be checked by anything; this is XML, and
+    Scripts/build-instrument.sh turns it into the thing Instruments loads.
+
+    What it shows is the same span names a trace records, because they come from
+    the same call: SystemSignposts mirrors every TraceLog span onto the signpost
+    stream. A stage that appears in one and not the other is a mistake in one of
+    them, which is the point of their being the same names.
+
+    Nothing measured here is ever compared by the test suite. The budgets these
+    intervals are read against, and the deterministic quantity checked in place
+    of each, are in PerformanceBudget.
+-->
+<package>
+    <id>app.ekranbildo.instruments</id>
+    <title>Ekranbildo</title>
+    <owner>
+        <name>Ekranbildo</name>
+    </owner>
+
+    <os-signpost-interval-schema>
+        <id>ekranbildo-stage</id>
+        <title>Stage</title>
+
+        <subsystem>"app.ekranbildo.Ekranbildo"</subsystem>
+        <category>"stages"</category>
+        <name>"stage"</name>
+
+        <start-pattern>
+            <message>?stage</message>
+        </start-pattern>
+        <end-pattern>
+            <message>?stage</message>
+        </end-pattern>
+
+        <column>
+            <mnemonic>stage</mnemonic>
+            <title>Stage</title>
+            <type>string</type>
+            <expression>?stage</expression>
+        </column>
+    </os-signpost-interval-schema>
+
+    <instrument>
+        <id>app.ekranbildo.instrument.stages</id>
+        <title>Ekranbildo Stages</title>
+        <category>Behavior</category>
+        <purpose>Which stage of a capture, a solve or a render is taking the time.</purpose>
+        <icon>Generic</icon>
+
+        <create-table>
+            <id>stages</id>
+            <schema-ref>ekranbildo-stage</schema-ref>
+        </create-table>
+
+        <graph>
+            <title>Stages</title>
+            <lane>
+                <title>Stage</title>
+                <table-ref>stages</table-ref>
+                <plot>
+                    <value-from>stage</value-from>
+                    <label-from>stage</label-from>
+                </plot>
+            </lane>
+        </graph>
+
+        <list>
+            <title>Stages</title>
+            <table-ref>stages</table-ref>
+            <column>start</column>
+            <column>duration</column>
+            <column>stage</column>
+        </list>
+    </instrument>
+</package>

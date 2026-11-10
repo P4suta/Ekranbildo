@@ -1,0 +1,21 @@
+[files]
+extend-exclude = [
+  ".build/",
+  "*.xcodeproj/",
+  "Fixtures/**/*.json",
+]
+
+[default]
+extend-ignore-re = [
+  "0x[0-9A-Fa-f_]+",
+]
+
+[default.extend-words]
+ene = "ene"
+nne = "nne"
+nnw = "nnw"
+wnw = "wnw"
+wsw = "wsw"
+ssw = "ssw"
+sse = "sse"
+ese = "ese"

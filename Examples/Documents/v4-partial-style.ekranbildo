@@ -1,0 +1,5 @@
+{
+  "canvas": {"raw": {"origin": {"x": 0, "y": 0}, "size": {"width": 480, "height": 320}}},
+  "annotations": [],
+  "style": {"tipGap": 9, "labelFont": {"family": "Inter", "size": 16}}
+}

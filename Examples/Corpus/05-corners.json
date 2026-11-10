@@ -1,0 +1,93 @@
+{
+  "canvas": {
+    "raw": {
+      "origin": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "width": 520,
+        "height": 360
+      }
+    }
+  },
+  "background": null,
+  "annotations": [
+    {
+      "id": {
+        "raw": 1
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 24,
+            "y": 24
+          },
+          "size": {
+            "width": 60,
+            "height": 26
+          }
+        }
+      },
+      "label": "Top left",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 2
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 436,
+            "y": 24
+          },
+          "size": {
+            "width": 60,
+            "height": 26
+          }
+        }
+      },
+      "label": "Top right",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 3
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 24,
+            "y": 310
+          },
+          "size": {
+            "width": 60,
+            "height": 26
+          }
+        }
+      },
+      "label": "Bottom left",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 4
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 436,
+            "y": 310
+          },
+          "size": {
+            "width": 60,
+            "height": 26
+          }
+        }
+      },
+      "label": "Bottom right",
+      "placement": null
+    }
+  ]
+}

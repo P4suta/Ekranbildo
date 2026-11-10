@@ -1,0 +1,74 @@
+{
+  "canvas": {
+    "raw": {
+      "origin": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "width": 420,
+        "height": 300
+      }
+    }
+  },
+  "background": null,
+  "annotations": [
+    {
+      "id": {
+        "raw": 1
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 190,
+            "y": 130
+          },
+          "size": {
+            "width": 34,
+            "height": 24
+          }
+        }
+      },
+      "label": "One",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 2
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 232,
+            "y": 130
+          },
+          "size": {
+            "width": 34,
+            "height": 24
+          }
+        }
+      },
+      "label": "Two",
+      "placement": null
+    },
+    {
+      "id": {
+        "raw": 3
+      },
+      "target": {
+        "raw": {
+          "origin": {
+            "x": 211,
+            "y": 170
+          },
+          "size": {
+            "width": 34,
+            "height": 24
+          }
+        }
+      },
+      "label": "Three",
+      "placement": null
+    }
+  ]
+}
